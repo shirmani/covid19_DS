@@ -3,7 +3,7 @@ import zipfile
 from datetime import date
 
 
-class SystemUI:
+class PcUI:
     @staticmethod
     def joint_path_and_dirname(path, name):
         return os.path.join(path, name)
