@@ -1,9 +1,10 @@
 import pandas as pd
-# from dir.origin_dir import *
-#
-# from programmerUI.display_store_df import *
-# from programmerUI.store_df import *
-# from programmerUI.display import *
+from dir.origin_dir import *
+
+
+from programmerUI.display_store_df import *
+from programmerUI.store_df import *
+from programmerUI.display import *
 
 # from collections import Counter
 from clean_data.clean import *
@@ -87,17 +88,12 @@ for k in drop_cols_by_df:
     vars()[k] = store_df.get_df_by_name(k)
     vars()[k].drop(drop_cols_by_df[k], axis=1, inplace=True)
 
-print("#### cols after rename and drop")
+# # ---- Shape of Data ----
+# track.print_shape_dfs()
 # track.print_cols_by_df()
-print(philippines["Final Diagnosis"].value_counts())
-print(philippines["background_diseases_origin"].value_counts())
+# # track.print_cols_values_by_dfs()
 
-# ---- Shape of Data ----
-track.print_shape_dfs()
-track.print_cols_by_df()
-# track.print_cols_values_by_dfs()
-
-# # ---- Clean & Format Date cols ----
+# ---- Clean & Format Date cols ----
 # # ---- Date Cols ----
 # # -Manual care
 # # japan
@@ -150,50 +146,52 @@ track.print_cols_by_df()
 # # tunisia
 # Clean.replace_value_by_comparison(tunisia, "date_onset_symptoms", {np.nan: ['-']})
 #
+# Display.print_with_num_of_line("done Manual care dates ")
 # # -automatic care
 # # -confirmed_date-
 # CTime.update_s_time_basic_multi_df([france, korea, indonesia, tunisia, japan,
 #                                     canada, singapore, guatemala, philippines,
 #                                     india_wiki, india_data, mexico, kerla, hong_kong],
 #                                     "confirmed_date", False)
-# print("--" + "date" + "1")
+# Display.print_with_num_of_line("date")
 #
 # CTime.update_s_time_basic_multi_df([vietnam], "confirmed_date", "%m/%d/%y")
-# print("--" + "date" + "2")
+# Display.print_with_num_of_line("date")
 #
 # # -deceased_date-
 # CTime.update_s_time_basic_multi_df([france, indonesia, korea,
 #                                     canada, guatemala,
 #                                     mexico, kerla],
 #                                     "deceased_date", False)  # colombia,
-# print("--" + "date" + " 3")
+# Display.print_with_num_of_line("date")
 #
 # # -released_date-
 # CTime.update_s_time_basic_multi_df([france, indonesia, korea, singapore, guatemala,
 #                                     kerla], "released_date", False)
 # CTime.update_s_time_basic_multi_df([vietnam], "released_date", "%m/%d/%y")
-# print("--" + "date" + " 3")
+# Display.print_with_num_of_line("date")
 #
 # # -return_date-
 # CTime.update_s_time_basic_multi_df([new_zealand, guatemala], "return_date", False)
 # CTime.update_s_time_basic_multi_df([vietnam], "return_date", "%m/%d/%Y")
-# print("--" + "date" + " 4")
+# Display.print_with_num_of_line("date")
 #
 # # -date_onset_symptoms-
 # CTime.update_s_time_basic_multi_df([korea, philippines, mexico, guatemala, hong_kong, tunisia,
 #                                     toronto], "date_onset_symptoms", False)
 #
 # CTime.update_s_time_basic_multi_df([usa], "date_onset_symptoms", "%Y/%m/%d")
-# print("--" + "date" + "5")
+# Display.print_with_num_of_line("date")
 #
 # # -date_death_or_discharge-
 # CTime.update_s_time_basic_multi_df([philippines, india_data, india_wiki, world],
 #                                   'date_death_or_discharge', False)
-# print("--" + "date" + "6")
+# Display.print_with_num_of_line("date")
 #
 # for j in ["confirmed_date", "return_date", "date_onset_symptoms"]:
 #     error = CTime.updat_s_time(world, j, "-", earliest=True)
 #     print(error)
+#     Display.print_with_num_of_line("world date")
 #
 #
 # track.print_col_values_by_dfs("confirmed_date")
@@ -204,7 +202,7 @@ track.print_cols_by_df()
 # for dataset in track.dfs:
 #     Clean.replace_value_by_comparison(dataset, "sex", sex_dict)
 # track.print_col_values_by_dfs("sex")
-#
+
 
 # ---- Symptoms ----
 
@@ -224,109 +222,109 @@ Display.print_with_num_of_line(" בעיה עם פילפנים יש אין סמפ
 track.print_col_values_by_dfs("symptoms")
 
 
-# ---- Background Diseases----
-for df in [vietnam, guatemala]:
-    TextAnalysis.textAnalysis(df, "background_diseases_origin",
-                              "background_diseases",
-                              GuessByDict(bag_words=background_diseases_bag_words,
-                                          bag_sentences=background_diseases_sentences_bag))
-
-
-print(world.columns)
-# Completing information from other columns
-TextAnalysis.textAnalysis(world, ["symptoms_origin", "background_diseases_origin"],
-                          "background_diseases",
-                          GuessByDict(bag_words=background_diseases_bag_words,
-                                      bag_sentences=background_diseases_sentences_bag))
-
-TextAnalysis.textAnalysis(philippines,
-                          ["Final Diagnosis", "background_diseases_origin"],
-                          "background_diseases",
-                          GuessByDict(bag_words=background_diseases_bag_words,
-                                      bag_sentences=background_diseases_sentences_bag))
-
-
-# mexico
-mexico["background_diseases"] = ""
-for col in mexico_background_diseases_cols:
-    mexico["background_diseases"] = mexico["background_diseases"] + mexico[col].apply(
-        lambda x: mexico_background_diseases_cols[col] if x == 1 else "")
-
-for df in track.dfs:
-    if "background_diseases" in df.columns:
-        df["background_diseases"] = df["background_diseases"].apply(lambda x: np.nan if x == "" else x)
-
-
-track.print_col_values_by_dfs("background_diseases")
-
-# ---- Background Diseases Binary ----
-
-world["background_diseases_binary"] = np.nan
-for dataset in [world, philippines, guatemala, vietnam, mexico]:
-    dataset["background_diseases_binary"] = dataset["background_diseases"].apply(lambda x: 1 if x == x else 0)
-    Display.print_with_num_of_line("background_diseases -> background_diseases_binary")
-
-# world
-Clean.replace_value_by_comparison(world, "more_data_and_background_diseases_binary",
-                                  {1: [1]}, name_output_col="background_diseases_binary")
-# usa
-Clean.replace_value_by_comparison(usa, "background_diseases_binary",
-                                  {1: ["Yes"], 0: ["No"], np.nan: ["Missing", "Unknown"]})
-
-track.print_col_values_by_dfs("background_diseases_binary")
-
-
-# ---- Treatment ----
-for x in [colombia, world, hong_kong, toronto]:
-    x["treatment"] = np.nan
-
-
-for dataset in [vietnam, singapore,  philippines]:
-    Clean.replace_value_by_comparison(dataset, "treatment", {np.nan: ["For validation", "?"]})
-    dataset.loc[dataset["treatment"].notnull(), "treatment"] = "hospitalized"
-
-
-for df in [kerla, india_data, hong_kong]:
-    Clean.replace_value_by_comparison(df, "severity_illness",
-                                      {"hospitalized": ["Hospitalized", "Hospitalised"]},
-                                      name_output_col="treatment")
-
-#  france
-Clean.replace_value_by_comparison(france, "treatment", {"hospitalized": ["released0", "hospital"],
-                                                        np.nan: ["deceased"]})
-
-# colombia
-Clean.replace_value_by_comparison(colombia, "treatment_origin",
-                                  {"hospitalized": ["Hospital Uci", "Hospital"],
-                                   "home isolation": ["Casa"]}, name_output_col="treatment")
-
-# mexico
-Clean.replace_value_by_comparison(mexico, "treatment", {"hospitalized": [2],
-                                                        "home isolation": [1]})
-
-# toronto
-for col in ["Ever in ICU", "Ever Intubated"]:
-    Clean.replace_value_by_comparison(toronto, col, {"hospitalized": ["Yes"]},
-                                      name_output_col="treatment")
-
-# usa
-Clean.replace_value_by_comparison(usa, "icu_yn", {"hospitalized": ["Yes"]},
-                                  name_output_col='treatment')
-
-Clean.replace_value_by_comparison(usa, "hosp_yn", {"hospitalized": ["Yes"],
-                                                   "home isolation": ["No"]},
-                                  name_output_col='treatment')
-
-# world
-TextAnalysis.textAnalysis(world,
-                          ["origin_severity_illness", "symptoms_origin"],
-                          "treatment",
-                          guess_type=GuessByDict(bag_words=world_treatment_bag_words,
-                                                 bag_sentences=world_treatment_sentences_bag),
-                          col_type=CategoryCol({"hospitalized": 2, "clinic": 1, "home isolation": 0}))
-
-
-track.print_col_values_by_dfs('treatment')
+# # ---- Background Diseases----
+# for df in [vietnam, guatemala]:
+#     TextAnalysis.textAnalysis(df, "background_diseases_origin",
+#                               "background_diseases",
+#                               GuessByDict(bag_words=background_diseases_bag_words,
+#                                           bag_sentences=background_diseases_sentences_bag))
+#
+#
+#
+# # Completing information from other columns
+# TextAnalysis.textAnalysis(world, ["symptoms_origin", "background_diseases_origin"],
+#                           "background_diseases",
+#                           GuessByDict(bag_words=background_diseases_bag_words,
+#                                       bag_sentences=background_diseases_sentences_bag))
+#
+# TextAnalysis.textAnalysis(philippines,
+#                           ["Final Diagnosis", "background_diseases_origin"],
+#                           "background_diseases",
+#                           GuessByDict(bag_words=background_diseases_bag_words,
+#                                       bag_sentences=background_diseases_sentences_bag))
+#
+#
+# # mexico
+# mexico["background_diseases"] = ""
+# for col in mexico_background_diseases_cols:
+#     mexico["background_diseases"] = mexico["background_diseases"] + mexico[col].apply(
+#         lambda x: mexico_background_diseases_cols[col] if x == 1 else "")
+#
+# for df in track.dfs:
+#     if "background_diseases" in df.columns:
+#         df["background_diseases"] = df["background_diseases"].apply(lambda x: np.nan if x == "" else x)
+#
+#
+# track.print_col_values_by_dfs("background_diseases")
+#
+# # ---- Background Diseases Binary ----
+#
+# world["background_diseases_binary"] = np.nan
+# for dataset in [world, philippines, guatemala, vietnam, mexico]:
+#     dataset["background_diseases_binary"] = dataset["background_diseases"].apply(lambda x: 1 if x == x else 0)
+#     Display.print_with_num_of_line("background_diseases -> background_diseases_binary")
+#
+# # world
+# Clean.replace_value_by_comparison(world, "more_data_and_background_diseases_binary",
+#                                   {1: [1]}, name_output_col="background_diseases_binary")
+# # usa
+# Clean.replace_value_by_comparison(usa, "background_diseases_binary",
+#                                   {1: ["Yes"], 0: ["No"], np.nan: ["Missing", "Unknown"]})
+#
+# track.print_col_values_by_dfs("background_diseases_binary")
+#
+#
+# # ---- Treatment ----
+# for x in [colombia, world, hong_kong, toronto]:
+#     x["treatment"] = np.nan
+#
+#
+# for dataset in [vietnam, singapore,  philippines]:
+#     Clean.replace_value_by_comparison(dataset, "treatment", {np.nan: ["For validation", "?"]})
+#     dataset.loc[dataset["treatment"].notnull(), "treatment"] = "hospitalized"
+#
+#
+# for df in [kerla, india_data, hong_kong]:
+#     Clean.replace_value_by_comparison(df, "severity_illness",
+#                                       {"hospitalized": ["Hospitalized", "Hospitalised"]},
+#                                       name_output_col="treatment")
+#
+# #  france
+# Clean.replace_value_by_comparison(france, "treatment", {"hospitalized": ["released0", "hospital"],
+#                                                         np.nan: ["deceased"]})
+#
+# # colombia
+# Clean.replace_value_by_comparison(colombia, "treatment_origin",
+#                                   {"hospitalized": ["Hospital Uci", "Hospital"],
+#                                    "home isolation": ["Casa"]}, name_output_col="treatment")
+#
+# # mexico
+# Clean.replace_value_by_comparison(mexico, "treatment", {"hospitalized": [2],
+#                                                         "home isolation": [1]})
+#
+# # toronto
+# for col in ["Ever in ICU", "Ever Intubated"]:
+#     Clean.replace_value_by_comparison(toronto, col, {"hospitalized": ["Yes"]},
+#                                       name_output_col="treatment")
+#
+# # usa
+# Clean.replace_value_by_comparison(usa, "icu_yn", {"hospitalized": ["Yes"]},
+#                                   name_output_col='treatment')
+#
+# Clean.replace_value_by_comparison(usa, "hosp_yn", {"hospitalized": ["Yes"],
+#                                                    "home isolation": ["No"]},
+#                                   name_output_col='treatment')
+#
+# # world
+# TextAnalysis.textAnalysis(world,
+#                           ["origin_severity_illness", "symptoms_origin"],
+#                           "treatment",
+#                           guess_type=GuessByDict(bag_words=world_treatment_bag_words,
+#                                                  bag_sentences=world_treatment_sentences_bag),
+#                           col_type=CategoryCol({"hospitalized": 2, "clinic": 1, "home isolation": 0}))
+#
+#
+# track.print_col_values_by_dfs('treatment')
 
 
 # ---- Severity Illness ----
@@ -408,30 +406,40 @@ for df in [world, vietnam, philippines]:
 
 
 track.print_col_values_by_dfs("severity_illness_by_WHO")
-# # unit "severity_illness"
-# for df in track.dfs:
-#     severity_illness_col_ls = []
-#     for i in df.columns:
-#         if "severity_illness" in i:
-#             severity_illness_col_ls.append(i)
-#     if len(severity_illness_col_ls) > 0:
-#         if "severity_illness" in severity_illness_col_ls :
-#             severity_illness_col_ls.remove("severity_illness")
-#         else:
-#             df["severity_illness"] = ""
+
+# unit "severity_illness"
+for df in track.dfs:
+    Unite.unite_all_the_cols_that_contain_x(df, "severity_illness", "severity_illness_over_time")
+
+    if "severity_illness_over_time" in df.columns:
+        print(df["severity_illness_over_time"].value_counts())
+        print(0)
+        Clean.replace_value_by_contained_all_x_in_ls(df, "severity_illness_over_time", {0: ["critical", "cured"],
+                                                                                        1: ["cured", "good"]})
+        print(df["severity_illness_over_time"].value_counts())
+
+        print("---------------------------------")
+# del check_df
+        # cat = CategoryCol({"": -1, "asymptomatic": 0, "good": 1, "critical": 2,
+        #                       "deceased": 3, "cured": 3})
+        #
+        # df_col = cat.organize(df["severity_illness_over_time"])
+        # print(df_col.columns[0])
+        # df["severity_illness"] = df_col[df_col.columns[0]]
+# del cat, df_col
+
+
+
+
+# input_cols = Pexpansion.if_x_not_ls_make_x_ls(input_cols)
+#         Pexpansion.set_up_class_var({"df": df, "input_cols": input_cols},
+#                                     pre_process_text)
 #
-#         Unite.unite_cols(df, ["severity_illness"] + severity_illness_col_ls)
-#         df.loc[df["severity_illness"] == "","severity_illness"] = None
-#         df["severity_illness_over_time"] = df["severity_illness"]
-#         cat = CategoryCol({"": -1, "asymptomatic": 0, "good": 1, "critical": 2,
-#                           "deceased": 3, "cured": 3})
-#         c = pd.DataFrame()
-#         c["severity_illness"] = df["severity_illness"]
-#         df_col = cat.organize(c)
-#         df["severity_illness"] = df_col[df_col.columns[0]]
-#         del cat ,c
-
-
+#         pre_process_text.process_text()
+#         Pexpansion.set_up_class_var({"df": df, "input_col": "process",
+#                                     "output_col_name": output_col_name}, guess_type)
+#         df_gross_guess_col = guess_type.guess()
+#         df.drop("process", axis=1, inplace=True)
 
 # track.print_col_values_by_dfs('severity_illness')
 # track.print_col_values_by_dfs("severity_illness_over_time")

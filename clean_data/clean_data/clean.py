@@ -41,6 +41,18 @@ class Clean:
                        name_output_col] = k
 
     @staticmethod
+    def replace_value_by_contained_all_x_in_ls(df, name_input_col, contained_dict, name_output_col=None):
+        """contained_dict = {replacment: [ls]}"""
+        if not name_output_col:
+            name_output_col = name_input_col
+
+        check_df = pd.get_dummies(df[name_input_col])
+        for k in contained_dict:
+            for col in check_df.columns:
+                if all(word in col for word in contained_dict[k]):
+                    df.loc[check_df[col] == 1, name_output_col] = k
+
+    @staticmethod
     def replace_empty_value_to_npnan(df, col):
         col_type = df[col].dtypes
         df[col] = df[col].astype("str")
