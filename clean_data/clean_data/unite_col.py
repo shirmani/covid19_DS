@@ -19,7 +19,7 @@ class Unite:
 
         # process
         df[cols[0]] = df[cols[0]].apply(lambda x: Pexpansion.del_duplicate_categories_in_multicategories_str(x))
-        df[cols[0]] = df[cols[0]].apply(lambda x: x.strip(",") if type(x) == str else x )
+        df[cols[0]] = df[cols[0]].apply(lambda x: x.strip(",") if type(x) == str else x)
 
         # Delete unnecessary columns
         if delete:
