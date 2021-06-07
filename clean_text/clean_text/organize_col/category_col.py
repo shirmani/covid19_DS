@@ -18,15 +18,15 @@ class CategoryCol(OrganizerCol):
 
     def write_importance_cat_to_output_col(self, hotvec_values, importance_cat, j):
         if importance_cat is None:
-            hotvec_values.loc[hotvec_values[j] == 1, "guess"] = j
+            hotvec_values.loc[hotvec_values[j] == 1, "organize_process"] = j
         else:
-            hotvec_values.loc[hotvec_values[j] == 1, "guess"] = importance_cat
+            hotvec_values.loc[hotvec_values[j] == 1, "organize_process"] = importance_cat
 
-    def organize(self, df_gross_guess_col):
-        Unite.unite_cols(df_gross_guess_col, list(df_gross_guess_col.columns))
-        hotvec_values = pd.get_dummies(df_gross_guess_col[df_gross_guess_col.columns[0]])
+    def organize(self, gross_guess_col):
+        df = pd.DataFrame(gross_guess_col)
+        hotvec_values = pd.get_dummies(df[df.columns[0]])
         for j in hotvec_values.columns:
             importance_cat = self.find_importace_cat_in_value(j)
             self.write_importance_cat_to_output_col(hotvec_values, importance_cat, j)
-        Clean.del_col(hotvec_values, "guess")
+        Clean.del_col(hotvec_values, "organize_process")
         return hotvec_values
