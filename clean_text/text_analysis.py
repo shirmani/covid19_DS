@@ -1,9 +1,9 @@
-import pandas as pd
-from clean_text.organize_col.multicategories_col import *
-from clean_text.guess.guess import *
-from clean_text.pre_process_text.make_text_to_root import *
-from clean_data.preservation import *
+from clean_data.preservation import PreservationCol
+from clean_text.guess.guess import Guess
+from clean_text.organize_col.multicategories_col import MultiCategoriesCol
+from clean_text.pre_process_text.make_text_to_root import ToRoot
 from programmerUI.display import Display
+from python_expansion.python_expansion import Pexpansion
 
 
 class TextAnalysis:

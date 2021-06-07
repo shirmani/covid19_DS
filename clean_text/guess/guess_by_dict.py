@@ -1,6 +1,9 @@
-from clean_data.unite_col import *
-from python_expansion import *
-from clean_text.guess.guess import *
+import pandas as pd
+
+from clean_data.clean import Clean
+from clean_data.unite_col import Unite
+from clean_text.guess.guess import Guess
+from python_expansion.python_expansion import Pexpansion
 
 
 class GuessByDict(Guess):

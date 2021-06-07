@@ -1,5 +1,5 @@
-from clean_data.clean import *
-import pandas as pd
+from clean_data.clean import Clean
+from python_expansion.python_expansion import Pexpansion
 
 
 class Unite:

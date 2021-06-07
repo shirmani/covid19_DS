@@ -1,5 +1,4 @@
-import pandas as pd
-from python_expansion import *
+from python_expansion.python_expansion import Pexpansion
 
 
 class PreservationCol:

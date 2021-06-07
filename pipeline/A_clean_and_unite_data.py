@@ -1,24 +1,20 @@
-import pandas as pd
-from dir.origin_dir import *
-
-
-from programmerUI.display_store_df import *
-from programmerUI.store_df import *
-from programmerUI.display import *
-
-# from collections import Counter
-from clean_data.clean import *
-from clean_data.clean_time import *
-from clean_text import *
-from clean_text.guess import GuessByDict
-from clean_text.organize_col import CategoryCol
-from clean_text.pre_process_text.without_process import NOPreProcess
-
-
-from value_for_clean_and_unite_data import *
-import time
-
 #  ---- Downland Data  ----
+import numpy as np
+
+from clean_data.clean import Clean
+from clean_data.unite_col import Unite
+from clean_text.guess.guess_by_dict import GuessByDict
+from clean_text.organize_col.category_col import CategoryCol
+from clean_text.pre_process_text.without_process import NOPreProcess
+from clean_text.text_analysis import TextAnalysis
+from dir.origin_dir import OriginDir
+from pipeline.value_for_clean_and_unite_data import origin_dict, change_cols_names_by_df, drop_cols_by_df, \
+    symptoms_bag_words, symptoms_sentences_bag
+from programmerUI.display import Display
+from programmerUI.display_store_df import DisplayStoreDF
+from programmerUI.store_df import StoreDF
+from python_expansion.python_expansion import Pexpansion
+
 path = "/home/shir/project/covid19DS"
 origin_dir = OriginDir(path, "origin29.03.2021")
 

@@ -1,12 +1,14 @@
-from dir.dir import *
-from local_pc_UI.local_pc_UI import *
+import os
 import pandas as pd
+
+from dir.dir import Dir
+from local_pc_UI.local_pc_UI import PcUI
 
 
 class OriginDir(Dir):
     def __init__(self, path, dir_name):
         if not dir_name:
-            dir_name = "origin" + SystemUI.get_today_strdate()
+            dir_name = "origin" + PcUI.get_today_strdate()
         super().__init__(path, dir_name)
 
     def unzip_file(self):
