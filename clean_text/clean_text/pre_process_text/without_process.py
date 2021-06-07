@@ -8,4 +8,4 @@ class NOPreProcess(PreProcessText):
 
     def process_text(self):
         self.build_process_col()
-        Unite.unite_cols_separate_by_comma(self.df, ["process"] + self.input_cols, delete=False)
+        Unite.unite_cols_separate_by_comma(self.df, ["process"] + self.input_cols)

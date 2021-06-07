@@ -16,6 +16,6 @@ class ToRoot(PreProcessText):
 
     def process_text(self):
         self.build_process_col()
-        Unite.unite_cols_separate_by_comma(self.df, ["process"] + self.input_cols , delete=False)
+        Unite.unite_cols_separate_by_comma(self.df, ["process"] + self.input_cols)
         Clean.clean_text_col_from_punctuation(self.df, "process")
         self._make_text_to_root("process")
