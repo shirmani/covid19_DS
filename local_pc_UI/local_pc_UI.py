@@ -12,7 +12,7 @@ class PcUI:
     def unzip_file(path_file, name_file, save_path):
         if ".zip" in name_file:
             try:
-                path_file = SystemUI.joint_path_and_dirname(path_file, name_file )
+                path_file = PcUI.joint_path_and_dirname(path_file, name_file )
 
                 with zipfile.ZipFile(path_file, 'r') as zipObj:
                     zipObj.extractall(save_path)
@@ -23,7 +23,3 @@ class PcUI:
     @staticmethod
     def get_today_strdate():
         return date.today().strftime("%d.%m.%Y")
-
-
-
-
