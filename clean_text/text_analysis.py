@@ -1,7 +1,9 @@
 from clean_data.preservation import PreservationCol
 from clean_text.guess.guess import Guess
 from clean_text.organize_col.multicategories_col import MultiCategoriesCol
+from clean_text.organize_col.organize_col import OrganizerCol
 from clean_text.pre_process_text.make_text_to_root import ToRoot
+from clean_text.pre_process_text.pre_process_text import PreProcessText
 from programmerUI.display import Display
 from python_expansion.python_expansion import Pexpansion
 
@@ -23,10 +25,10 @@ class TextAnalysis:
         return col_type.organize(df_gross_guess_col)
 
     @staticmethod
-    def textAnalysis(df, input_cols, output_col_name,
-                     guess_type: Guess,
-                     pre_process_text=ToRoot(),
-                     col_type=MultiCategoriesCol()):
+    def text_analysis(df, input_cols, output_col_name,
+                      guess_type: Guess,
+                      pre_process_text: PreProcessText = ToRoot(),
+                      col_type: OrganizerCol = MultiCategoriesCol()):
         print(Display.num_of_line(2) + " textAnalysis " + str(input_cols) + " -> " + output_col_name)
         store = PreservationCol(df, input_cols)
         df_col = TextAnalysis._analysis_flow(df, input_cols, output_col_name, pre_process_text, guess_type, col_type)
