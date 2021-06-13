@@ -1,5 +1,5 @@
 from clean_data.clean import Clean
-from python_expansion.python_expansion import Pexpansion
+from python_expansion_lib.python_expansion import Pexpansion
 
 
 class Unite:
@@ -7,7 +7,7 @@ class Unite:
     @staticmethod
     def unite_cols_separate_by_comma(df, cols):
         for i in range(1, len(cols)):
-            Clean.add_comma_to_notnull_value_in_col(df, cols[0])
+            Clean.add_comma_to_value_and_replace_null_with_empty_str(df, cols[0])
             df[cols[0]] = df[cols[0]].astype(str).replace('nan', "") + df[cols[i]]
         return df
 
