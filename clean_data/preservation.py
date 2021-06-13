@@ -1,4 +1,4 @@
-from python_expansion.python_expansion import Pexpansion
+from python_expansion_lib.python_expansion import Pexpansion
 
 
 class PreservationCol:
