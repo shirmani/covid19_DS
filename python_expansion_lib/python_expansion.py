@@ -71,7 +71,7 @@ class Pexpansion:
                 string = string.replace(i, k)
         return string
 
-    # test
+    # TODO: test
     @staticmethod
     def strip_element_in_ls(ls):
         for i in range(len(ls)):
@@ -79,21 +79,15 @@ class Pexpansion:
                 ls[i] = ls[i].strip()
         return ls
 
-    # test
     @staticmethod
-    def remove_from_ls(ls, ls_of_remove):
-        """
-        x: str/int
-        """
+    def remove_from_flat_ls(ls, ls_of_remove):
         ls_of_remove = Pexpansion.if_x_not_ls_make_x_ls(ls_of_remove)
         ls = Pexpansion.strip_element_in_ls(ls)
-
-        for x in ls_of_remove:
-            if x in ls:
-                ls.remove(x)
+        for i in ls_of_remove:
+            ls = list(filter(lambda x: x != i, ls))
         return ls
 
-    # test
+    # TODO: test
     @staticmethod
     def from_ls_to_str_tag_separated(ls, tag=","):
         """ deletes the duplicates and  NONE from ls """
@@ -102,7 +96,7 @@ class Pexpansion:
         string = tag.join([str(i) for i in ls])
         return string
 
-    # test
+    # TODO: test
     @staticmethod
     def select_category_by_importance(x, dictionary_importance):
         """importance: Determined by a dictionary
@@ -116,7 +110,7 @@ class Pexpansion:
         max_importance_index = ls_degree_importance.index(min(ls_degree_importance))
         return ls[max_importance_index]
 
-    # test
+    # TODO: test
     @staticmethod
     def filter_value_counts_dict_by_amount_value(dictionary, min_amount_num):
         new_dict = {}
@@ -150,7 +144,7 @@ class Pexpansion:
         keys = Pexpansion.from_ls_to_str_comma_separated(keys)
         return keys
 
-    # test
+    # TODO: test
     @staticmethod
     def decade_of_range(ls_range):
         # standart ["89","9"] -> ["89","09"]
@@ -160,14 +154,14 @@ class Pexpansion:
 
         return ls_range
 
-    # test
+    # TODO: test
     @staticmethod
     def from_word_ls_to_roots_str(x, ps):
         """make ls of words to str of roots separated by ' ' """
         ls = [ps.stem(i) for i in x]
         return ' '.join(ls)
 
-    # test
+    # TODO: test
     @staticmethod
     def make_dict_with_empty_ls_as_value(ls_keys):
         return dict(zip(ls_keys, [[] for i in range(len(ls_keys))]))
@@ -176,10 +170,22 @@ class Pexpansion:
     def make_dict_with_empty_str_as_value(ls_keys):
         return dict(zip(ls_keys, ["" for i in range(len(ls_keys))]))
 
+    ## TODO: test
     @staticmethod
     def set_up_class_var(dict_var, instance):
         for k, v in dict_var.items():
             setattr(instance, k, v)
+
+    # TODO: test
+    @staticmethod
+    def return_npnan_instead_empty_space(x):
+        if type(x) == str:
+            if x.strip() == "":
+                return None
+            else:
+                return x
+        else:
+            return x
 
     @staticmethod
     def v():
