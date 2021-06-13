@@ -3,7 +3,7 @@ import nltk
 from clean_data.clean import Clean
 from clean_data.unite_col import Unite
 from clean_text.pre_process_text.pre_process_text import PreProcessText
-from python_expansion.python_expansion import Pexpansion
+from python_expansion_lib.python_expansion import Pexpansion
 
 
 class ToRoot(PreProcessText):

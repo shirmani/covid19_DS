@@ -5,7 +5,7 @@ from clean_text.organize_col.organize_col import OrganizerCol
 from clean_text.pre_process_text.make_text_to_root import ToRoot
 from clean_text.pre_process_text.pre_process_text import PreProcessText
 from programmerUI.display import Display
-from python_expansion.python_expansion import Pexpansion
+from python_expansion_lib.python_expansion import Pexpansion
 
 
 class TextAnalysis:
