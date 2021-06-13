@@ -125,7 +125,14 @@ change_cols_names_by_df = {"france": {"health": "severity_illness", "status": "t
                                       'TIPO_PACIENTE': "treatment",
                                       'FECHA_INGRESO': "confirmed_date",
                                       'FECHA_SINTOMAS': "date_onset_symptoms",
-                                      'FECHA_DEF': "deceased_date"},
+                                      'FECHA_DEF': "deceased_date",
+                                      'DIABETES': " diabetes,",
+                                      'EPOC': " chronic obstructive pulmonary,",
+                                      'ASMA': " asthma,", 'INMUSUPR': " immunosuppression,",
+                                      'HIPERTENSION': " hypertension,",
+                                      'CARDIOVASCULAR': " cardiovascular,",
+                                      'OBESIDAD': " obesity,",
+                                      'RENAL_CRONICA': " kidney failure,"},
 
                            "colombia": {"id": 'ID DE CASO',
                                         'SEXO': "sex", 'EDAD': "age",
@@ -421,13 +428,13 @@ symptoms_to_background_diseases_sentences_bag = {"chronic obstructive pulmonary 
                                                  "coronary heart disease": ['ischem', 'heart'],
                                                  "chronic kidney disease": ['chronic', 'kidney', 'diseas']}
 
-mexico_background_diseases_cols = {'DIABETES': " diabetes,",
-                                   'EPOC':" chronic obstructive pulmonary,",
-                                   'ASMA': " asthma,", 'INMUSUPR': " immunosuppression,",
-                                   'HIPERTENSION': " hypertension,",
-                                   'CARDIOVASCULAR': " cardiovascular,",
-                                   'OBESIDAD': " obesity,",
-                                   'RENAL_CRONICA': " kidney failure,"}
+mexico_background_diseases_cols = [" diabetes,",
+                                   " chronic obstructive pulmonary,",
+                                    " asthma,",  " immunosuppression,",
+                                    " hypertension,",
+                                    " cardiovascular,",
+                                    " obesity,",
+                                    " kidney failure,"]
 
 world_treatment_bag_words = {"home isolation": ["home", "quarantin"],
              "clinic": [],
