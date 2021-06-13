@@ -14,5 +14,5 @@ class Display:
         print(Display.num_of_line(3) + "-----------------------------")
 
     @staticmethod
-    def print_with_num_of_line(string, depth=3):
+    def print_with_num_of_line(string, depth=2):
         print(Display.num_of_line(depth) + " " + string)

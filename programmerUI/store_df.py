@@ -1,4 +1,4 @@
-from python_expansion.python_expansion import Pexpansion
+from python_expansion_lib.python_expansion import Pexpansion
 
 
 class StoreDF:
@@ -9,7 +9,6 @@ class StoreDF:
     def remove(self, df_names):
         df_names = Pexpansion.if_x_not_ls_make_x_ls(df_names)
         for df_name in df_names:
-            print(type(self.dfs_names[0]))
             index_df = self.dfs_names.index(df_name)
             del self.dfs_names[index_df]
             del self.dfs[index_df]
