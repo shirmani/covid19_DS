@@ -1,91 +1,78 @@
-import pytest
-from clean_data.clean import *
 import numpy as np
+import pandas as pd
+import pytest
+
+from clean_data.clean import *
 from test_tool.tool_for_test import *
 
 
 class TestClean:
 
-    def test_replace_value_by_comparison_value_replace_value(self):
-        df = pd.DataFrame({"a": ["x", "ax", np.nan]})
-        Clean.replace_value_by_comparison(df, "a", {"v": ["x"]})
-        target = pd.DataFrame({"a": ["v", "ax", np.nan]})
+    @pytest.fixture(scope="function")
+    def df(self):
+        yield pd.DataFrame({"a": ["x", "ax", np.nan, 1, 2, "  ", None, "|  ", "", 11, [1, 2, '3', 2]]})
+
+    @pytest.fixture(scope="function")
+    def text_df(self):
+        yield pd.DataFrame({"a": ["Dad: went to the Garden.", None, " Tulik-sits by the sea",
+                                  "Rina loves strawberries?", "Assaf, bought   |5 cars", np.nan,
+                                  33,]})
+
+    def test_replace_value_by_comparison(self, df):
+        Clean.replace_value_by_comparison(df, "a", {"v": ["x"], np.nan: [2]})
+        target = pd.DataFrame({"a": ["v", "ax", np.nan, 1, np.nan, "  ", None, "|  ", "", 11, [1, 2, "3", 2]]})
         assert Tool.compare_dfs(df, target)
 
-    def test_replace_value_by_comparison_npnan_replace_value(self):
-        df = pd.DataFrame({"a": ["x", "ax", np.nan]})
-        Clean.replace_value_by_comparison(df, "a", {np.nan: ["x"]})
-        target = pd.DataFrame({"a": [np.nan, "ax", np.nan]})
+    def test_replace_value_by_contained_string(self, df):
+        Clean.replace_value_by_contained_string(df, "a", {"v": ["x"], "l": [" "], "3": [1]})
+        target = pd.DataFrame({"a": ["v", "v", np.nan, 1, 2, "l", None, "l", "", 11, [1, 2, "3", 2]]})
         assert Tool.compare_dfs(df, target)
 
-    def test_replace_value_by_comparison_int_col(self):
-        df = pd.DataFrame({"a": [1, 2, np.nan]})
-        Clean.replace_value_by_comparison(df, "a", {np.nan: ["x"]})
-        target = pd.DataFrame({"a": [1, 2, np.nan]})
-        assert Tool.compare_dfs(df, target)
-
-    def test_replace_value_by_comparison_different_output_col(self):
-        df = pd.DataFrame({"a": ["x", "ax", np.nan]})
-        Clean.replace_value_by_comparison(df, "a", {np.nan: ["x"]}, name_output_col="b")
-        target = pd.DataFrame({"a": ["x", "ax", np.nan],
-                               "b": [np.nan, "ax", np.nan]})
-        assert Tool.compare_dfs(df, target)
-
-    def test_replace_value_by_contained_x(self):
-        df = pd.DataFrame({"a": ["x", "ax", np.nan]})
-        Clean.replace_value_by_contained_x(df, "a", {"v": ["x"]})
-        target = pd.DataFrame({"a": ["v", "v", np.nan]})
-        assert Tool.compare_dfs(df, target)
-
-    def test_replace_value_by_contained_x_npnan_replace_value(self):
-        df = pd.DataFrame({"a": ["x", "ax", np.nan]})
-        Clean.replace_value_by_contained_x(df, "a", {np.nan: ["x"]})
-        target = pd.DataFrame({"a": [np.nan, np.nan, np.nan]})
-        assert Tool.compare_dfs(df, target)
-
-    def test_replace_value_by_contained_x_int_col(self):
-        df = pd.DataFrame({"a": [1, 2, np.nan]})
-        Clean.replace_value_by_contained_x(df, "a", {np.nan: ["x"]})
-        target = pd.DataFrame({"a": [1, 2, np.nan]})
-        assert Tool.compare_dfs(df, target)
-
-    def test_replace_empty_value_to_npnan(self):
-        df = pd.DataFrame({"a": [None, "nan", " ", "s", "na", np.nan]})
-        Clean.replace_empty_value_to_npnan(df, "a")
-        target = pd.DataFrame({"a": [np.nan, np.nan, np.nan, "s", "na", np.nan]})
-        assert Tool.compare_dfs(df, target)
-
-    def test_add_comma_to_notnull_value_in_col(self):
-        df = pd.DataFrame({"a": [None, "nan", " ", "s", "na", np.nan]})
-        Clean.add_comma_to_notnull_value_in_col(df, "a")
-        target = pd.DataFrame({"a": [np.nan, np.nan, np.nan, "s,", "na,", np.nan]})
-        assert Tool.compare_dfs(df, target)
-
-    # def test_clean_text_col_from_punctuation(self):
-    #     df = pd.DataFrame({"a": [None, "    ", "ee,ee", "tt-ss", "sff!", 2, np.nan]})
-    #     Clean.clean_text_col_from_punctuation(df, "a")
-    #     target = pd.DataFrame({"a": [None, "    ", "ee ee", "tt ss", "sff ", 2, np.nan]})
-    #     assert Tool.compare_dfs(df, target)
-
-    """problem: ["22","22"] == "22 22" => True """
-    def test_change_words_col_to_ls_word_col(self):
+    def test_replace_value_by_contained_all_x_in_ls(self):
         pass
-        # df = pd.DataFrame({"a": ["woer swsw", None, " ", "ee,ee",
-        #                          "tt-ss", "sff!", 2, np.nan, "22 22"]})
-        # # Clean.change_words_col_to_ls_word_col(df, "a")
-        # target = pd.DataFrame({"a": [["woer", "swsw"], np.nan, np.nan, ["ee" "ee"],
-        #                              ["tt", "ss"], ["sff"], 2, np.nan, "22 22"]})
-        # assert Tool.compare_dfs(df, target)
 
-    def test_del_col(self):
-        df = pd.DataFrame({"a": ["x", "ax"],
-                           "b": ["x", "ax"],
-                           "c": ["x", "ax"],
-                           "d": ["x", "ax"]})
-        Clean.del_col(df, ["a", "c"])
-        target = pd.DataFrame({"a": ["x", "ax"],
-                           "c": ["x", "ax"],})
-        assert df == target
+    def test_replace_empty_value_to_npnan(self, df):
+        Clean.replace_empty_value_to_npnan(df, "a")
+        target = pd.DataFrame({"a": ["x", "ax", np.nan, 1, 2, np.nan, np.nan, "|  ", np.nan, 11, [1, 2, "3", 2]]})
+        assert Tool.compare_dfs(df, target)
+
+    def test_clean_text_col_from_punctuation(self, text_df):
+        Clean.clean_text_col_from_punctuation(text_df, "a")
+        target = pd.DataFrame({"a": ["Dad  went to the Garden ", None, " Tulik sits by the sea",
+                                     "Rina loves strawberries ", "Assaf  bought    5 cars", np.nan,
+                                     33]})
+        assert Tool.compare_dfs(text_df, target)
+
+    def test_add_comma_to_value_and_replace_null_with_empty_str(self, df):
+        Clean.add_comma_to_value_and_replace_null_with_empty_str(df, "a")
+        target = pd.DataFrame({"a": ["x,", "ax,", "", "1,", "2,", "", "", "|  ,", "",
+                                     "11,", "[1, 2, '3', 2],"]})
+        assert Tool.compare_dfs(df, target)
+
+    def test_change_words_col_to_ls_word_col(self, text_df):
+        Clean.change_text_col_to_ls_words_col(text_df, "a")
+        target = pd.DataFrame({"a": [["Dad", "went", "to", "the", "Garden"], None,
+                                     ["Tulik", "sits", "by", "the", "sea"],
+                                     ["Rina", "loves", "strawberries"],
+                                     ["Assaf", "bought", "5", "cars"], np.nan, 33]})
+        assert Tool.compare_dfs(text_df, target)
+
+    # @pytest.fixture
+    # def fixt(self, request):
+    #     return request.param * 3
+    #
+    # @pytest.mark.parametrize("fixt", ["a", "b"], indirect=True)
+    # def test_indirect(self, fixt):
+    #     assert len(fixt) == 3
+    #
+    #
+    #
+    # def test_del_col(self, df):
+    #     Clean.del_col(df, ["a", "c"])
+    #     target = pd.DataFrame({"a": ["x", "ax"],
+    #                        "c": ["x", "ax"],})
+    #     assert df == target
+
 
 
 if __name__ == "__main__":
