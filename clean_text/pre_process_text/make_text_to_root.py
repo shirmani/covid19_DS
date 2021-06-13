@@ -12,7 +12,7 @@ class ToRoot(PreProcessText):
 
     def _make_text_to_root(self, col):
         ps = nltk.stem.SnowballStemmer('english')
-        Clean.change_words_col_to_ls_word_col(self.df, col)
+        Clean.change_text_col_to_ls_words_col(self.df, col)
         self.df[col] = self.df[col].apply(lambda x:
                                                     Pexpansion.from_word_ls_to_roots_str(x, ps) if x == x else "")
 
