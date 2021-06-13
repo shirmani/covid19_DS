@@ -1,6 +1,5 @@
 import pytest
-from python_expansion import *
-
+from python_expansion_lib.python_expansion import *
 
 class TestPexpansion:
 
@@ -127,18 +126,11 @@ class TestPexpansion:
         assert target == result
 
 
-    # def test_remove_from_ls(self):
-    #     ls = [3.4, True, ["r","g",4], "trr", ]
-    #     result = Pexpansion.remove_from_ls(ls, ["r", True, None])
-    #     target = [3.4, ["g",4], "trr", ]
-    #     assert target == result
-
-    # def test_from_ls_to_str_comma_separated(self):
-    #     ls = [False, None, "", "abc", 123, 34.5, "   ", ["rrr", "  ", 443],]
-    #     result = Pexpansion.from_ls_to_str_comma_separated(ls)
-    #
-    #     assert target == result
-
+    def test_remove_from_ls(self):
+        ls = [3.4, True, "r  ","g",4, "trr", " ", "a", "  r"]
+        result = Pexpansion.remove_from_flat_ls(ls, ["r", True])
+        target = [3.4, 'g', 4, 'trr', '', 'a']
+        assert target == result
 
     def test_del_duplicate_categories_in_multicategories_str(self):
         string = "aa,23212,U H,U h,^^$,aa,U H,true, aa"
