@@ -29,7 +29,7 @@ class TextAnalysis:
                       guess_type: Guess,
                       pre_process_text: PreProcessText = ToRoot(),
                       col_type: OrganizerCol = MultiCategoriesCol()):
-        print(Display.num_of_line(2) + " textAnalysis " + str(input_cols) + " -> " + output_col_name)
+        print(Display.num_of_line(3) + " text_analysis " + str(input_cols) + " -> " + output_col_name)
         store = PreservationCol(df, input_cols)
         df_col = TextAnalysis._analysis_flow(df, input_cols, output_col_name, pre_process_text, guess_type, col_type)
         df[output_col_name] = df_col[df_col.columns[0]]
