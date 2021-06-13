@@ -1,5 +1,5 @@
 from clean_data.clean import *
-from python_expansion import *
+from python_expansion_lib import *
 import numpy as np
 import pandas as pd
 
@@ -61,7 +61,7 @@ class CTime:
         """
         ls = x.split(character_separator)
 
-        ls = Pexpansion.remove_from_ls(ls , "")
+        ls = Pexpansion.remove_from_flat_ls(ls, "")
 
         ls = CTime.make_ls_of_str_to_datatime(ls)
 
