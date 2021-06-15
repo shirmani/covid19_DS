@@ -1,70 +1,56 @@
-import numpy as np
 import pandas as pd
+
+from pipeline.pipeline_lib.clean_data import CleanData
+from pipeline.pipeline_lib.read_dfs import ReadDfs
+from pipeline.pipeline_lib.stabilize_dfs import StabilizeDF
+from pipeline.pipeline_value.value_read_dfs import path
+
 pd.options.mode.chained_assignment = None
 
 
 from clean_data.clean import Clean
-from clean_data.clean_time import CTime
-from clean_data.unite_col import Unite
-from clean_feature.StabilizeDF import StabilizeDF
-from clean_feature.clean_feature import CleanJ
+from unite_dfs_parts.unite_col import Unite
+from pipeline.pipeline_lib import stabilize_dfs
 from clean_text.guess.guess_by_dict import GuessByDict
 from clean_text.organize_col.category_col import CategoryCol
 from clean_text.pre_process_text.without_process import NOPreProcess
 from clean_text.text_analysis import TextAnalysis
 from dir.origin_dir import OriginDir
-from pipeline.value_for_clean_and_unite_data import origin_dict, change_cols_names_by_df, drop_cols_by_df, \
-    symptoms_bag_words, symptoms_sentences_bag, severity_illness_dict, severity_illness_from_symptoms_by_WHO, sex_dict, \
-    background_diseases_bag_words, background_diseases_sentences_bag, mexico_background_diseases_cols, \
-    world_treatment_bag_words, world_treatment_sentences_bag, world_severity_illness_bag_words, \
+from pipeline.pipeline_value.value_for_clean_data import change_cols_names_by_df, drop_cols_by_df, \
+severity_illness_dict, severity_illness_from_symptoms_by_WHO, \
+ world_severity_illness_bag_words, \
     world_severity_illness_sentences_bag
-from programmerUI.display import Display
-from programmerUI.display_store_df import DisplayStoreDF
-from programmerUI.store_df import StoreDF
+from disply_code_clear.display import Display
+from store_dfs.display_store_df import DisplayStoreDF
+from store_dfs.store_df import StoreDF
 from python_expansion_lib.python_expansion import Pexpansion
 
 #  ---- Downland Data  ----
-path = "/home/shir/project/covid19DS"
 origin_dir = OriginDir(path, "origin29.03.2021")
-
 # kaggle = Ka
 # .+936*ggleUI(origin_dict, origin_dir.path)
 # kaggle.downland_data()
 # origin_dir.unzip_file()
 
 #  ---- Read the Data  ----
-dfs = []
-dfs_names = []
 
-for var in origin_dict:
-    origin_dict[var].append("")
-    dfs_names.append(var)
-    vars()[var] = origin_dir.read_file_as_DataFrame(name_file=origin_dict[var][1],
-                                                    sheet_name=origin_dict[var][2])
-    dfs.append(vars()[var])
-
+dfs, dfs_names = ReadDfs.read(origin_dir)
 store_df = StoreDF(dfs, dfs_names)
 access_df_store = DisplayStoreDF(store_df)
 
 #  ---- DS consolidation ----
-var_of_clean = dict(zip(dfs_names, dfs))
-stabilize = StabilizeDF(var_of_clean)
-hong_kong, canada, toronto, usa, mexico = stabilize.stabilize_DFs()
+stabilize = StabilizeDF(store_df)
+stabilize.stabilize_DFs()
 
-del canada_dead, canada_cases, stabilize
+del stabilize
 
-store_df.remove(["canada_dead", "canada_cases", "hong_kong", "toronto", "usa", "mexico"])
-for i in ["hong_kong", "canada", "toronto", "usa", "mexico"]:
-    store_df.add(i, vars()[i])
+
+
 
 
 #  ---- Change cols name ----
-for k in change_cols_names_by_df:
-    store_df.get_df_by_name(k).rename(columns=change_cols_names_by_df[k], inplace=True)
 
 #  ---- Drop Colomns ----
-for k in drop_cols_by_df:
-    store_df.get_df_by_name(k).drop(drop_cols_by_df[k], axis=1, inplace=True)
 
 
 # # ---- Shape of Data ----
@@ -73,8 +59,8 @@ for k in drop_cols_by_df:
 access_df_store.print_cols_values_by_dfs()
 
 
-var_of_clean["access_df_store"] = access_df_store
-cleanJ = CleanJ(store_df)
+# var_of_clean["access_df_store"] = access_df_store
+CleanData.clean_data(store_df, access_df_store)
 
 # # ---- Clean & Format Date cols ----
 # # ---- Date Cols ----
@@ -198,31 +184,13 @@ cleanJ = CleanJ(store_df)
 # # access_df_store.print_col_values_by_dfs("return_date")
 #
 #
-# ---- Sex ----
-cleanJ.sex(sex_dict)
-access_df_store.print_col_values_by_dfs("sex")
 
-
-# ---- Symptoms ----
-cleanJ.symptoms(symptoms_bag_words, symptoms_sentences_bag)
-Display.print_with_num_of_line(" בעיה עם פילפנים יש אין סמפטומים במקום שיש לתקן ")
-access_df_store.print_col_values_by_dfs("symptoms")
-
-
-# ---- Background Diseases----
-cleanJ.background_diseases(background_diseases_bag_words, background_diseases_sentences_bag,
-                           mexico_background_diseases_cols)
-
-access_df_store.print_col_values_by_dfs("background_diseases")
-
-# ---- Background Diseases Binary ----
-cleanJ.background_diseases_binary_by_background_diseases()
-access_df_store.print_col_values_by_dfs("background_diseases_binary")
-
-
-# ---- Treatment ----
-cleanJ.treatment(world_treatment_bag_words, world_treatment_sentences_bag)
-access_df_store.print_col_values_by_dfs('treatment')
+#
+# # ---- Symptoms ----
+# cleanJ.symptoms(symptoms_bag_words, symptoms_sentences_bag)
+# Display.print_with_num_of_line(" בעיה עם פילפנים יש אין סמפטומים במקום שיש לתקן ")
+# access_df_store.print_col_values_by_dfs("symptoms")
+#
 
 
 # ---- Severity Illness ----
@@ -298,8 +266,8 @@ for df in [world, vietnam, philippines]:
                                guess_type=GuessByDict(bag_words=severity_illness_from_symptoms_by_WHO,
                                                      bag_sentences={}),
                                col_type=CategoryCol(priorities_dict={"asymptomatic": 0, "good": 1,
-                                                                    "critical": 2, "deceased": 3,
-                                                                    "cured": 3}))
+                                                                     "critical": 2, "deceased": 3,
+                                                                     "cured": 3}))
 
 
 access_df_store.print_col_values_by_dfs("severity_illness_by_WHO")
@@ -307,15 +275,11 @@ access_df_store.print_col_values_by_dfs("severity_illness_by_WHO")
 # unit "severity_illness"
 for df in access_df_store.dfs:
     Unite.unite_all_the_cols_that_contain_x(df, "severity_illness", "severity_illness_over_time")
-
     if "severity_illness_over_time" in df.columns:
-        print(df["severity_illness_over_time"].value_counts())
-        print(0)
-        Clean.replace_value_by_contained_all_x_in_ls(df, "severity_illness_over_time", {0: ["critical", "cured"],
-                                                                                        1: ["cured", "good"]})
-        print(df["severity_illness_over_time"].value_counts())
+        Clean.replace_value_by_contained_all_x_in_ls(df, "severity_illness_over_time", {"": ["critical", "cured"]})
+access_df_store.print_col_values_by_dfs('severity_illness')
+access_df_store.print_col_values_by_dfs('severity_illness_over_time')
 
-        print("---------------------------------")
 # del check_df
         # cat = CategoryCol({"": -1, "asymptomatic": 0, "good": 1, "critical": 2,
         #                       "deceased": 3, "cured": 3})
@@ -399,7 +363,7 @@ for df in access_df_store.dfs:
 #     name = df_name.replace("_", " ")
 #     name = df_name.replace("data", " ")
 #     name = df_name.replace("wiki", " ")
-#     store_df.get_df_by_name(df_name)["country"] = name
+#     store_dfs.get_df_by_name(df_name)["country"] = name
 #
 # world["country"] = world["country"].apply(lambda x: x.lower() if x == x else np.nan)
 # track.print_col_values_by_dfs('country')
