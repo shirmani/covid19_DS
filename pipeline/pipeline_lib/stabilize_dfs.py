@@ -3,9 +3,10 @@ from clean_data.clean import Clean
 
 
 class StabilizeDF:
-    def __init__(self, dictionary):
-        for k, v in dictionary.items():
-            setattr(self, k, v)
+    def __init__(self, store_df):
+        self.store_df = store_df
+        for name in store_df.dfs_names:
+            setattr(self, name, store_df.get_df_by_name(name))
 
     def stabilize_hong_kong(self):
         self.hong_kong = self.hong_kong[self.hong_kong.Confirmed == "Confirmed"]
@@ -38,5 +39,8 @@ class StabilizeDF:
         toronto = self.stabilize_toronto()
         usa = self.stabilize_usa()
         mexico = self.stabilize_mexico()
-        return hong_kong, canada, toronto, usa, mexico
+
+        self.store_df.remove(["canada_dead", "canada_cases", "hong_kong", "toronto", "usa", "mexico"])
+        for i in ["hong_kong", "canada", "toronto", "usa", "mexico"]:
+            self.store_df.add(i, vars()[i])
 

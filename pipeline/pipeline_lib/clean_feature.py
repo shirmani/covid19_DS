@@ -4,7 +4,8 @@ from clean_data.clean_time import CTime
 from clean_text.guess.guess_by_dict import GuessByDict
 from clean_text.organize_col.category_col import CategoryCol
 from clean_text.text_analysis import TextAnalysis
-from programmerUI.display import Display
+from disply_code_clear.display import Display
+
 
 
 class CleanJ:
@@ -12,6 +13,14 @@ class CleanJ:
         self.store_df = store_df
         for name in store_df.dfs_names:
             setattr(self, name, store_df.get_df_by_name(name))
+
+    def change_name_cols(self, change_cols_names_by_df):
+        for k in change_cols_names_by_df:
+            self.store_df.get_df_by_name(k).rename(columns=change_cols_names_by_df[k], inplace=True)
+
+    def drop_unnecessary_cols(self, drop_cols_by_df):
+        for k in drop_cols_by_df:
+            self.store_df.get_df_by_name(k).drop(drop_cols_by_df[k], axis=1, inplace=True)
 
     def date_death_or_discharge(self):
         CTime.update_s_time_basic_multi_df([self.philippines, self.india_data, self.india_wiki, self.world],
@@ -107,3 +116,7 @@ class CleanJ:
                                    guess_type=GuessByDict(bag_words=world_treatment_bag_words,
                                                           bag_sentences=world_treatment_sentences_bag),
                                    col_type=CategoryCol({"hospitalized": 2, "clinic": 1, "home isolation": 0}))
+
+
+
+
