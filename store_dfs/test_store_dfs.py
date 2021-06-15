@@ -30,13 +30,11 @@ class TestPStoreDF:
         assert any([Tool.compare_dfs(i, x) for i in store_dfs.dfs])
         assert "x" in store_dfs.dfs_names
 
-
     def test_get_df_by_name(self, store_dfs):
         target = pd.DataFrame({"a": [1, 3, 4],
                                "b": [1, 3, 4]})
         result = store_dfs.get_df_by_name("a")
         assert Tool.compare_dfs(target, result)
-
 
 
 if __name__ == "__main__":
