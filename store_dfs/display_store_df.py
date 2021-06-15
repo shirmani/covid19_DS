@@ -1,5 +1,5 @@
 import pandas as pd
-from programmerUI.display import Display
+from disply_code_clear.display import Display
 
 
 class DisplayStoreDF:
