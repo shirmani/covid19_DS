@@ -1,3 +1,4 @@
+import pandas as pd
 from clean_data.clean import Clean
 from python_expansion_lib.python_expansion import Pexpansion
 
@@ -7,6 +8,7 @@ class Unite:
     @staticmethod
     def unite_cols_separate_by_comma(df, cols):
         for i in range(1, len(cols)):
+            df[cols] = df[cols].astype(str)
             Clean.add_comma_to_value_and_replace_null_with_empty_str(df, cols[0])
             df[cols[0]] = df[cols[0]].astype(str).replace('nan', "") + df[cols[i]]
         return df
@@ -27,14 +29,7 @@ class Unite:
 
     @staticmethod
     def unite_all_the_cols_that_contain_x(df, x, name_output_col):
-        cols_that_contain_x = []
-        for i in df.columns:
-            if x in i:
-                cols_that_contain_x.append(i)
+        cols_that_contain_x = list(df.filter(like=x).columns)
         if len(cols_that_contain_x) > 0:
-            df["0"] = ""
-            Unite.unite_cols(df, ["0"] + cols_that_contain_x, delete=True)
-            df.rename(columns={"0": name_output_col}, inplace=True)
-
-
-
+            df[name_output_col] = ""
+            Unite.unite_cols(df, [name_output_col] + cols_that_contain_x, delete=True)
