@@ -1,11 +1,11 @@
 import numpy as np
+
 from clean_data.clean import Clean
 from clean_data.clean_time import CTime
 from clean_text.guess.guess_by_dict import GuessByDict
 from clean_text.organize_col.category_col import CategoryCol
 from clean_text.text_analysis import TextAnalysis
 from disply_code_clear.display import Display
-
 
 
 class CleanJ:
@@ -89,7 +89,7 @@ class CleanJ:
 
         #  france
         Clean.replace_value_by_comparison(self.france, "treatment", {"hospitalized": ["released0", "hospital"],
-                                                                np.nan: ["deceased"]})
+                                                                     np.nan: ["deceased"]})
 
         # colombia
         Clean.replace_value_by_comparison(self.colombia, "treatment_origin",
@@ -98,7 +98,7 @@ class CleanJ:
 
         # mexico
         Clean.replace_value_by_comparison(self.mexico, "treatment", {"hospitalized": [2],
-                                                                "home isolation": [1]})
+                                                                     "home isolation": [1]})
 
         # toronto
         for col in ["Ever in ICU", "Ever Intubated"]:
@@ -117,6 +117,16 @@ class CleanJ:
                                                           bag_sentences=world_treatment_sentences_bag),
                                    col_type=CategoryCol({"hospitalized": 2, "clinic": 1, "home isolation": 0}))
 
+    def severity_illness_by_deceased_or_released_date(self):
+        datasets_have_both = [indonesia, france, guatemala, kerla, korea]
 
+        for df in datasets_have_both + [canada, mexico] + [singapore, vietnam]:
+            df['severity_illness1'] = ""
 
+        for x in datasets_have_both + [canada]:  # , mexico
+            x.loc[x.deceased_date.notnull(), 'severity_illness1'] = "deceased"
+            Display.print_with_num_of_line("deceased_date -> severity_illness1")
 
+        for x in datasets_have_both + [singapore, vietnam]:
+            x.loc[x.released_date.notnull(), 'severity_illness1'] += ",cured"
+            Display.print_with_num_of_line("released_date -> severity_illness1")
