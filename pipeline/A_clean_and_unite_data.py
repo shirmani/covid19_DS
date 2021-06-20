@@ -3,27 +3,25 @@ import pandas as pd
 from pipeline.pipeline_lib.clean_data import CleanData
 from pipeline.pipeline_lib.read_dfs import ReadDfs
 from pipeline.pipeline_lib.stabilize_dfs import StabilizeDF
-from pipeline.pipeline_value.value_read_dfs import path
-
-pd.options.mode.chained_assignment = None
-
+from pipeline.pipeline_value.value_read_dfs import path, origin_dict
 
 from clean_data.clean import Clean
 from unite_dfs_parts.unite_col import Unite
-from pipeline.pipeline_lib import stabilize_dfs
+
 from clean_text.guess.guess_by_dict import GuessByDict
 from clean_text.organize_col.category_col import CategoryCol
 from clean_text.pre_process_text.without_process import NOPreProcess
 from clean_text.text_analysis import TextAnalysis
 from dir.origin_dir import OriginDir
-from pipeline.pipeline_value.value_for_clean_data import change_cols_names_by_df, drop_cols_by_df, \
-severity_illness_dict, severity_illness_from_symptoms_by_WHO, \
- world_severity_illness_bag_words, \
-    world_severity_illness_sentences_bag
+from pipeline.pipeline_value.value_for_clean_data import severity_illness_dict, severity_illness_from_symptoms_by_WHO, \
+                                                         world_severity_illness_bag_words, \
+                                                         world_severity_illness_sentences_bag
 from disply_code_clear.display import Display
-from store_dfs.display_store_df import DisplayStoreDF
-from store_dfs.store_df import StoreDF
+from store_dfs_lib.display_store_df import DisplayStoreDF
+from store_dfs_lib.store_dfs import StoreDF
 from python_expansion_lib.python_expansion import Pexpansion
+
+pd.set_option('mode.chained_assignment', None)
 
 #  ---- Downland Data  ----
 origin_dir = OriginDir(path, "origin29.03.2021")
@@ -33,34 +31,38 @@ origin_dir = OriginDir(path, "origin29.03.2021")
 # origin_dir.unzip_file()
 
 #  ---- Read the Data  ----
+# dfs, dfs_names = ReadDfs.read(origin_dir)
 
-dfs, dfs_names = ReadDfs.read(origin_dir)
+dfs = []
+dfs_names = []
+
+for var in origin_dict:
+    origin_dict[var].append("")  # make sheet_name=origin_dict[var][2] == "" if not origin_dict[var][2]
+    dfs_names.append(var)
+    vars()[var] = origin_dir.read_file_as_DataFrame(name_file=origin_dict[var][1],
+                                                    sheet_name=origin_dict[var][2])
+    dfs.append(vars()[var])
+
 store_df = StoreDF(dfs, dfs_names)
 access_df_store = DisplayStoreDF(store_df)
-
 #  ---- DS consolidation ----
 stabilize = StabilizeDF(store_df)
 stabilize.stabilize_DFs()
 
 del stabilize
+canada = store_df.get_df_by_name("canada")
+#  ---- Clean ----
+CleanData.clean_data(store_df, access_df_store)
 
-
-
-
-
-#  ---- Change cols name ----
-
-#  ---- Drop Colomns ----
 
 
 # # ---- Shape of Data ----
 # track.print_shape_dfs()
 # track.print_cols_by_df()
-access_df_store.print_cols_values_by_dfs()
+# access_df_store.print_cols_values_by_dfs()
 
 
-# var_of_clean["access_df_store"] = access_df_store
-CleanData.clean_data(store_df, access_df_store)
+
 
 # # ---- Clean & Format Date cols ----
 # # ---- Date Cols ----
@@ -196,24 +198,28 @@ CleanData.clean_data(store_df, access_df_store)
 # ---- Severity Illness ----
 for df in [france, korea,
            philippines, india_data, india_wiki, kerla,
-           colombia, hong_kong, toronto]:
+            colombia ]: #  hong_kong, toronto
+    print(0)
     df["severity_illness"] = df.severity_illness.apply(lambda x:
                                   Pexpansion.get_key_from_dict_by_value(severity_illness_dict, x))
 
 
 # data from deceased_date and released_date: severity_illness2
+
+#  by date
 datasets_have_both = [indonesia, france, guatemala, kerla, korea]
 
 for df in datasets_have_both + [canada, mexico] + [singapore, vietnam]:
     df['severity_illness1'] = ""
 
-for x in datasets_have_both + [canada, mexico]:
+for x in datasets_have_both + [canada]: # , mexico
     x.loc[x.deceased_date.notnull(), 'severity_illness1'] = "deceased"
     Display.print_with_num_of_line("deceased_date -> severity_illness1")
 
 for x in datasets_have_both + [singapore, vietnam]:
     x.loc[x.released_date.notnull(), 'severity_illness1'] += ",cured"
     Display.print_with_num_of_line("released_date -> severity_illness1")
+
 
 # unique col
 # singapore
@@ -258,6 +264,7 @@ TextAnalysis.text_analysis(world, ["symptoms_origin", "origin_severity_illness"]
                                                                 "cured": 3}))
 world["origin_severity_illness"] = ""
 
+#  by semptom
 # severity_illness by symptoms by WHO
 for df in [world, vietnam, philippines]:
     TextAnalysis.text_analysis(df, "symptoms",
@@ -363,7 +370,7 @@ access_df_store.print_col_values_by_dfs('severity_illness_over_time')
 #     name = df_name.replace("_", " ")
 #     name = df_name.replace("data", " ")
 #     name = df_name.replace("wiki", " ")
-#     store_dfs.get_df_by_name(df_name)["country"] = name
+#     store_dfs_lib.get_df_by_name(df_name)["country"] = name
 #
 # world["country"] = world["country"].apply(lambda x: x.lower() if x == x else np.nan)
 # track.print_col_values_by_dfs('country')
