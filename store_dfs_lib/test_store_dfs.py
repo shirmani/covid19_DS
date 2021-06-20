@@ -1,6 +1,7 @@
 import pandas as pd
 import pytest
 
+from python_expansion_lib.python_expansion import Pexpansion
 from store_dfs_lib.store_dfs import StoreDF
 from test_tool.tool_for_test import Tool
 
@@ -36,6 +37,18 @@ class TestStoreDF:
                                "b": [1, 3, 4]})
         result = store_dfs.get_df_by_name("a")
         assert Tool.compare_dfs(target, result)
+
+    def test_add_col_to_dfs(self, store_dfs):
+        store_dfs.add_col_to_dfs(["a", "b"], "dd", 0)
+        target_a = pd.DataFrame({"a": [1, 3, 4],
+                                 "b": [1, 3, 4],
+                                 "dd": [0, 0, 0]})
+
+        target_b = pd.DataFrame({"n": [1, 3, 4],
+                                 "b": [1, 3, 4],
+                                "dd": [0, 0, 0]})
+        assert Tool.compare_dfs(store_dfs.get_df_by_name("a"), target_a)
+        assert Tool.compare_dfs(store_dfs.get_df_by_name("b"), target_b)
 
 
 if __name__ == "__main__":
