@@ -1,12 +1,13 @@
 import numpy as np
 from clean_data.clean import Clean
+from pipeline.pipeline_value.value_for_change_cols_in_dfs import change_cols_names_by_df, drop_cols_by_df
 
 
 class StabilizeDF:
-    def __init__(self, store_df):
-        self.store_df = store_df
-        for name in store_df.dfs_names:
-            setattr(self, name, store_df.get_df_by_name(name))
+    def __init__(self, dfs_store):
+        self.dfs_store = dfs_store
+        for name in dfs_store.dfs_names:
+            setattr(self, name, dfs_store.get_df_by_name(name))
 
     def stabilize_hong_kong(self):
         self.hong_kong = self.hong_kong[self.hong_kong.Confirmed == "Confirmed"]
@@ -40,7 +41,18 @@ class StabilizeDF:
         usa = self.stabilize_usa()
         mexico = self.stabilize_mexico()
 
-        self.store_df.remove(["canada_dead", "canada_cases", "hong_kong", "toronto", "usa", "mexico"])
+        self.dfs_store.remove(["canada_dead", "canada_cases", "hong_kong", "toronto", "usa", "mexico"])
         for i in ["hong_kong", "canada", "toronto", "usa", "mexico"]:
-            self.store_df.add(i, vars()[i])
+            self.dfs_store.add(i, vars()[i])
 
+    def change_name_cols(self, change_cols_names_by_df):
+        for k in change_cols_names_by_df:
+            self.dfs_store.get_df_by_name(k).rename(columns=change_cols_names_by_df[k], inplace=True)
+
+    def drop_unnecessary_cols(self, drop_cols_by_df):
+        for k in drop_cols_by_df:
+            self.dfs_store.get_df_by_name(k).drop(drop_cols_by_df[k], axis=1, inplace=True)
+
+    def organize_cols(self):
+        self.change_name_cols(change_cols_names_by_df)
+        # self.drop_unnecessary_cols(drop_cols_by_df)
