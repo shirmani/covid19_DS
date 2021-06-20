@@ -21,3 +21,6 @@ class StoreDF:
         index_df = self.dfs_names.index(df_name)
         return self.dfs[index_df]
 
+    def add_col_to_dfs(self, ls_names_dfs, name_col, initial_value):
+        for name in ls_names_dfs:
+            self.get_df_by_name(name)[name_col] = initial_value
