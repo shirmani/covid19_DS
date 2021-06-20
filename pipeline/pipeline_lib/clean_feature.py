@@ -14,13 +14,7 @@ class CleanJ:
         for name in store_df.dfs_names:
             setattr(self, name, store_df.get_df_by_name(name))
 
-    def change_name_cols(self, change_cols_names_by_df):
-        for k in change_cols_names_by_df:
-            self.store_df.get_df_by_name(k).rename(columns=change_cols_names_by_df[k], inplace=True)
 
-    def drop_unnecessary_cols(self, drop_cols_by_df):
-        for k in drop_cols_by_df:
-            self.store_df.get_df_by_name(k).drop(drop_cols_by_df[k], axis=1, inplace=True)
 
     def date_death_or_discharge(self):
         CTime.update_s_time_basic_multi_df([self.philippines, self.india_data, self.india_wiki, self.world],
@@ -32,9 +26,9 @@ class CleanJ:
             Clean.replace_value_by_comparison(dataset, "sex", sex_dict)
 
     def symptoms(self, symptoms_bag_words, symptoms_sentences_bag):
-        text_analysis_dict = {"vietnam": ["symptoms_origin"],
+        text_analysis_dict = {"vietnam": ["symptoms_origin_1", "symptoms_origin_2", "symptoms_origin_3"],
                               "world": ["symptoms_origin"],
-                              "philippines": ["Final Diagnosis", "symptoms_origin"]}
+                              "philippines": ["symptoms_origin_1", "symptoms_origin_2"]}
 
         for df_name, cols in text_analysis_dict.items():
             TextAnalysis.text_analysis(self.store_df.get_df_by_name(df_name), cols,
@@ -44,10 +38,10 @@ class CleanJ:
     def background_diseases(self, background_diseases_bag_words, background_diseases_sentences_bag,
                             mexico_background_diseases_cols):
 
-        df_to_background_diseases_text_analysis = {"vietnam": ["background_diseases_origin"],
+        df_to_background_diseases_text_analysis = {"vietnam": ["background_diseases_origin", ],
                               "guatemala": ["background_diseases_origin"],
                               "world": ["symptoms_origin", "background_diseases_origin"],
-                              "philippines":  ["Final Diagnosis", "background_diseases_origin"]}
+                              "philippines":  ["background_diseases_origin"]}
 
         for df_name, cols in df_to_background_diseases_text_analysis.items():
             TextAnalysis.text_analysis(self.store_df.get_df_by_name(df_name), cols,
@@ -77,10 +71,45 @@ class CleanJ:
         Clean.replace_value_by_comparison(self.usa, "background_diseases_binary",
                                           {1: ["Yes"], 0: ["No"], np.nan: ["Missing", "Unknown"]})
 
+    def ever_intubated(self, binary_dict):
+        dfs_ever_intubated = self.store_df.get_dfs_names_if_contain_col("treatment_ever_intubated")
+        dfs_current_intubated = self.store_df.get_dfs_names_if_contain_col("treatment_current_intubated")
+
+        d = {"treatment_ever_intubated": dfs_ever_intubated,
+             "treatment_current_intubated": dfs_current_intubated}
+
+        for col, ls_df in d.items():
+            for name_df in ls_df:
+                Clean.replace_value_by_comparison(self.store_df.get_df_by_name(name_df),
+                                                  col, binary_dict, name_output_col="ever_intubated")
+
+    def ever_icu(self, binary_dict):
+        dfs_ever_icu = self.store_df.get_dfs_names_if_contain_col("treatment_ever_icu")
+        dfs_current_icu = self.store_df.get_dfs_names_if_contain_col("treatment_current_icu")
+
+        d = {"treatment_ever_icu": dfs_ever_icu,
+             "treatment_current_iicu": dfs_current_icu}
+
+        for col, ls_df in d.items():
+            for name_df in ls_df:
+                Clean.replace_value_by_comparison(self.store_df.get_df_by_name(name_df),
+                                                  col, binary_dict, name_output_col="ever_icu")
+
+    def treatment_by_ever_icu(self):
+        dfs_ever_intubated = self.store_df.get_dfs_names_if_contain_col("ever_icu")
+        for name_df in dfs_ever_intubated:
+            Clean.replace_value_by_comparison(self.store_df.get_df_by_name(name_df),
+                                              "ever_icu", {"hospitalized": [1]},
+                                              name_output_col="treatment")
+
+    def treatment_by_ever_intubated(self):
+        dfs_ever_intubated = self.store_df.get_dfs_names_if_contain_col("ever_intubated")
+        for name_df in dfs_ever_intubated:
+            Clean.replace_value_by_comparison(self.store_df.get_df_by_name(name_df),
+                                              "ever_intubated", {"hospitalized": [1]},
+                                              name_output_col="treatment")
+
     def treatment(self, world_treatment_bag_words, world_treatment_sentences_bag):
-        for df in [self.vietnam, self.singapore, self.philippines]:
-            Clean.replace_value_by_comparison(df, "treatment", {np.nan: ["For validation", "?"]})
-            df.loc[df["treatment"].notnull(), "treatment"] = "hospitalized"
 
         for df in [self.kerla, self.india_data, self.hong_kong]:
             Clean.replace_value_by_comparison(df, "severity_illness",
@@ -101,7 +130,7 @@ class CleanJ:
                                                                      "home isolation": [1]})
 
         # toronto
-        for col in ["Ever in ICU", "Ever Intubated"]:
+        for col in ["Ever in ICU",]:
             Clean.replace_value_by_comparison(self.toronto, col, {"hospitalized": ["Yes"]},
                                               name_output_col="treatment")
 
@@ -117,16 +146,26 @@ class CleanJ:
                                                           bag_sentences=world_treatment_sentences_bag),
                                    col_type=CategoryCol({"hospitalized": 2, "clinic": 1, "home isolation": 0}))
 
+    def treatment_by_name_of_hospital(self):
+        for name_df in self.store_df.get_dfs_names_if_contain_col("name_of_hospital"):
+            Clean.replace_value_by_comparison(self.store_df.get_df_by_name(name_df), "name_of_hospital",
+                                              {np.nan: ["For validation", "?"]})
+
+            self.store_df.get_df_by_name(name_df).loc[
+                self.store_df.get_df_by_name(name_df)["name_of_hospital"].notnull(), "treatment"] = "hospitalized"
+
     def severity_illness_by_deceased_or_released_date(self):
-        datasets_have_both = [indonesia, france, guatemala, kerla, korea]
+        ls_deceased_date = self.store_df.get_dfs_names_if_contain_col("deceased_date")
+        ls_released_date = self.store_df.get_dfs_names_if_contain_col("released_date")
 
-        for df in datasets_have_both + [canada, mexico] + [singapore, vietnam]:
-            df['severity_illness1'] = ""
+        self.store_df.add_col_to_dfs(ls_deceased_date + ls_released_date, "severity_illness1", "")
 
-        for x in datasets_have_both + [canada]:  # , mexico
-            x.loc[x.deceased_date.notnull(), 'severity_illness1'] = "deceased"
+        for name_df in ls_deceased_date:
+            self.store_df.get_df_by_name(name_df).loc[self.store_df.get_df_by_name(name_df).deceased_date.notnull(),
+                                                      'severity_illness1'] = "deceased"
             Display.print_with_num_of_line("deceased_date -> severity_illness1")
 
-        for x in datasets_have_both + [singapore, vietnam]:
-            x.loc[x.released_date.notnull(), 'severity_illness1'] += ",cured"
+        for name_df in ls_released_date:
+            self.store_df.get_df_by_name(name_df).loc[self.store_df.get_df_by_name(name_df).released_date.notnull(),
+                                                 'severity_illness1'] += ",cured"
             Display.print_with_num_of_line("released_date -> severity_illness1")
