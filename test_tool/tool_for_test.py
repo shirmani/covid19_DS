@@ -5,6 +5,8 @@ class Tool:
 
     @staticmethod
     def compare_dfs(dfa, dfb):
+        dfa.sort_index(inplace=True, axis=1)
+        dfb.sort_index(inplace=True, axis=1)
         return dfa.equals(dfb)
 
     @staticmethod
