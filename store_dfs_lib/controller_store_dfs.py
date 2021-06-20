@@ -4,19 +4,25 @@ from store_dfs_lib.get_df_by_filter import FilterStoreDF
 
 class ControllerStoreDFs:
 
-    def __init__(self, store_df):
-        self.store_df = store_df
-        self.display_store_df = DisplayStoreDF(store_df)
-        self.filter_store = FilterStoreDF(store_df)
+    def __init__(self, dfs_store):
+        self.store_df = dfs_store
+        self.dfs = dfs_store.dfs
+        self.dfs_names = dfs_store.dfs_names
 
-    def remove(self):
-        self.store_df.remove()
+        self.display_store_df = DisplayStoreDF(dfs_store)
+        self.filter_store = FilterStoreDF(dfs_store)
 
-    def add(self):
-        self.store_df.add()
+    def remove(self, df_names):
+        self.store_df.remove(df_names)
+
+    def add(self, df_name, df):
+        self.store_df.add(df_name, df)
 
     def get_df_by_name(self, df_name):
         return self.store_df.get_df_by_name(df_name)
+
+    def add_col_to_dfs(self, ls_names_dfs, name_col, initial_value):
+        self.store_df.add_col_to_dfs(ls_names_dfs, name_col, initial_value)
 
     # filter
     def get_dfs_names_if_contain_col(self, col):
@@ -38,9 +44,10 @@ class ControllerStoreDFs:
     def print_cols_values_by_dfs(self):
         self.display_store_df.print_cols_values_by_dfs()
 
+
     # filter + store
     def get_ls_of_dfs_that_contain_col(self, col):
-        dfs_names = self.get_dfs_names_if_contain_col(col)
-        return [self.get_df_by_name(i) for i in dfs_names]
+        names = self.get_dfs_names_if_contain_col(col)
+        return [self.get_df_by_name(name) for name in names]
 
 

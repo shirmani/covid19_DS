@@ -57,21 +57,9 @@ class TestClean:
                                      ["Assaf", "bought", "5", "cars"], np.nan, 33]})
         assert Tool.compare_dfs(text_df, target)
 
-    # @pytest.fixture
-    # def fixt(self, request):
-    #     return request.param * 3
-    #
-    # @pytest.mark.parametrize("fixt", ["a", "b"], indirect=True)
-    # def test_indirect(self, fixt):
-    #     assert len(fixt) == 3
-    #
-    #
-    #
-    # def test_del_col(self, df):
-    #     Clean.del_col(df, ["a", "c"])
-    #     target = pd.DataFrame({"a": ["x", "ax"],
-    #                        "c": ["x", "ax"],})
-    #     assert df == target
+
+
+
 
 
 
