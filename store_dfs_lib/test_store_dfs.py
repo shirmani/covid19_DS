@@ -1,10 +1,11 @@
 import pandas as pd
 import pytest
-from store_dfs.store_df import StoreDF
+
+from store_dfs_lib.store_dfs import StoreDF
 from test_tool.tool_for_test import Tool
 
 
-class TestPStoreDF:
+class TestStoreDF:
 
     @pytest.fixture(scope="function")
     def store_dfs(self):
