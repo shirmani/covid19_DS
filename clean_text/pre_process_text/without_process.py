@@ -1,4 +1,4 @@
-from clean_data.unite_col import *
+from unite_dfs_parts.unite_col import *
 from clean_text.pre_process_text.pre_process_text import *
 
 

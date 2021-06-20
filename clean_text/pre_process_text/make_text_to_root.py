@@ -1,7 +1,6 @@
 import nltk
-
 from clean_data.clean import Clean
-from clean_data.unite_col import Unite
+from unite_dfs_parts.unite_col import Unite
 from clean_text.pre_process_text.pre_process_text import PreProcessText
 from python_expansion_lib.python_expansion import Pexpansion
 

@@ -1,5 +1,5 @@
 import pandas as pd
-from clean_data.unite_col import *
+from unite_dfs_parts.unite_col import *
 from clean_text.organize_col.organize_col import *
 
 

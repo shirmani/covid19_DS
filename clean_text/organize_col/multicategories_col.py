@@ -1,4 +1,4 @@
-from clean_data.unite_col import Unite
+from unite_dfs_parts.unite_col import Unite
 from clean_text.organize_col.organize_col import OrganizerCol
 
 
