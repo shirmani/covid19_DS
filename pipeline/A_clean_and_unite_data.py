@@ -6,6 +6,7 @@ from pipeline.pipeline_lib.stabilize_dfs import StabilizeDF
 from pipeline.pipeline_value.value_read_dfs import path, origin_dict
 
 from clean_data.clean import Clean
+from store_dfs_lib.controller_store_dfs import ControllerStoreDFs
 from unite_dfs_parts.unite_col import Unite
 
 from clean_text.guess.guess_by_dict import GuessByDict
@@ -17,7 +18,6 @@ from pipeline.pipeline_value.value_for_clean_data import severity_illness_dict, 
                                                          world_severity_illness_bag_words, \
                                                          world_severity_illness_sentences_bag
 from disply_code_clear.display import Display
-from store_dfs_lib.display_store_df import DisplayStoreDF
 from store_dfs_lib.store_dfs import StoreDF
 from python_expansion_lib.python_expansion import Pexpansion
 
@@ -43,23 +43,27 @@ for var in origin_dict:
                                                     sheet_name=origin_dict[var][2])
     dfs.append(vars()[var])
 
-store_df = StoreDF(dfs, dfs_names)
-access_df_store = DisplayStoreDF(store_df)
+store_df = ControllerStoreDFs(StoreDF(dfs, dfs_names))
+
 #  ---- DS consolidation ----
 stabilize = StabilizeDF(store_df)
 stabilize.stabilize_DFs()
+stabilize.organize_cols()
 
 del stabilize
 canada = store_df.get_df_by_name("canada")
+store_df = ControllerStoreDFs(StoreDF(dfs, dfs_names))
 #  ---- Clean ----
-CleanData.clean_data(store_df, access_df_store)
 
+CleanData.clean_data(store_df)
 
 
 # # ---- Shape of Data ----
-# track.print_shape_dfs()
-# track.print_cols_by_df()
-# access_df_store.print_cols_values_by_dfs()
+# store_df.print_shape_dfs()
+# store_df.print_cols_by_df()
+# store_df.print_cols_values_by_dfs()
+
+
 
 
 
@@ -196,29 +200,30 @@ CleanData.clean_data(store_df, access_df_store)
 
 
 # ---- Severity Illness ----
-for df in [france, korea,
-           philippines, india_data, india_wiki, kerla,
-            colombia ]: #  hong_kong, toronto
-    print(0)
-    df["severity_illness"] = df.severity_illness.apply(lambda x:
-                                  Pexpansion.get_key_from_dict_by_value(severity_illness_dict, x))
+
+for name_df in store_df.get_dfs_names_if_contain_col("severity_illness"):
+    store_df.get_df_by_name(name_df)["severity_illness"] = store_df.get_df_by_name(name_df)["severity_illness"].apply(lambda x:
+                                     Pexpansion.get_key_from_dict_by_value(severity_illness_dict, x))
 
 
-# data from deceased_date and released_date: severity_illness2
 
-#  by date
-datasets_have_both = [indonesia, france, guatemala, kerla, korea]
+# by date
+ls_deceased_date = store_df.get_dfs_names_if_contain_col("deceased_date")
+ls_released_date = store_df.get_dfs_names_if_contain_col("released_date")
 
-for df in datasets_have_both + [canada, mexico] + [singapore, vietnam]:
-    df['severity_illness1'] = ""
+store_df.add_col_to_dfs(ls_deceased_date + ls_released_date, "severity_illness1", "")
 
-for x in datasets_have_both + [canada]: # , mexico
-    x.loc[x.deceased_date.notnull(), 'severity_illness1'] = "deceased"
+for name_df in ls_deceased_date:
+    store_df.get_df_by_name(name_df).loc[store_df.get_df_by_name(name_df).deceased_date.notnull(),
+                                         'severity_illness1'] = "deceased"
     Display.print_with_num_of_line("deceased_date -> severity_illness1")
 
-for x in datasets_have_both + [singapore, vietnam]:
-    x.loc[x.released_date.notnull(), 'severity_illness1'] += ",cured"
+for name_df in ls_released_date:
+    store_df.get_df_by_name(name_df).loc[store_df.get_df_by_name(name_df).released_date.notnull(),
+                                         'severity_illness1'] += ",cured"
     Display.print_with_num_of_line("released_date -> severity_illness1")
+
+store_df.print_col_values_by_dfs('severity_illness1')
 
 
 # unique col
@@ -266,8 +271,8 @@ world["origin_severity_illness"] = ""
 
 #  by semptom
 # severity_illness by symptoms by WHO
-for df in [world, vietnam, philippines]:
-    TextAnalysis.text_analysis(df, "symptoms",
+for name_df in [world, vietnam, philippines]:
+    TextAnalysis.text_analysis(name_df, "symptoms",
                               "severity_illness_by_WHO",
                                pre_process_text=NOPreProcess(),
                                guess_type=GuessByDict(bag_words=severity_illness_from_symptoms_by_WHO,
@@ -277,15 +282,15 @@ for df in [world, vietnam, philippines]:
                                                                      "cured": 3}))
 
 
-access_df_store.print_col_values_by_dfs("severity_illness_by_WHO")
+store_df.print_col_values_by_dfs("severity_illness_by_WHO")
 
 # unit "severity_illness"
-for df in access_df_store.dfs:
-    Unite.unite_all_the_cols_that_contain_x(df, "severity_illness", "severity_illness_over_time")
-    if "severity_illness_over_time" in df.columns:
-        Clean.replace_value_by_contained_all_x_in_ls(df, "severity_illness_over_time", {"": ["critical", "cured"]})
-access_df_store.print_col_values_by_dfs('severity_illness')
-access_df_store.print_col_values_by_dfs('severity_illness_over_time')
+for name_df in store_df.dfs:
+    Unite.unite_all_the_cols_that_contain_x(name_df, "severity_illness", "severity_illness_over_time")
+    if "severity_illness_over_time" in name_df.columns:
+        Clean.replace_value_by_contained_all_x_in_ls(name_df, "severity_illness_over_time", {"": ["critical", "cured"]})
+store_df.print_col_values_by_dfs('severity_illness')
+store_df.print_col_values_by_dfs('severity_illness_over_time')
 
 # del check_df
         # cat = CategoryCol({"": -1, "asymptomatic": 0, "good": 1, "critical": 2,
