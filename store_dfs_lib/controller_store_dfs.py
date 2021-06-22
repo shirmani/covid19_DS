@@ -11,6 +11,7 @@ class ControllerStoreDFs:
 
         self.display_store_df = DisplayStoreDF(dfs_store)
         self.filter_store = FilterStoreDF(dfs_store)
+        self.df_of_presence_col_within_df = self.filter_store.df_of_presence_col_within_df
 
     def remove(self, df_names):
         self.store_df.remove(df_names)
@@ -28,6 +29,9 @@ class ControllerStoreDFs:
     def get_dfs_names_if_contain_col(self, col):
         return self.filter_store.get_dfs_names_if_contain_col(col)
 
+    def get_dict_keys_names_dfs_values_cols_contain_x(self, x):
+        return self.filter_store.get_dict_keys_names_dfs_values_cols_contain_x(x)
+
     # display
     def print_df_by_name(self, df_name, num_rows):
         self.display_store_df.print_df_by_name(df_name, num_rows)
@@ -43,7 +47,6 @@ class ControllerStoreDFs:
 
     def print_cols_values_by_dfs(self):
         self.display_store_df.print_cols_values_by_dfs()
-
 
     # filter + store
     def get_ls_of_dfs_that_contain_col(self, col):
