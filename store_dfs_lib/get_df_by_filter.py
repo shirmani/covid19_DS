@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import itertools
 
 from python_expansion_lib.python_expansion import Pexpansion
 
@@ -28,4 +27,16 @@ class FilterStoreDF:
         except KeyError:
             ls_dfs = []
         return ls_dfs
+
+    def get_dict_keys_names_dfs_values_cols_contain_x(self, x):
+        dict_keys_names_dfs_values_cols_contain_x = {}
+        for col in self.df_of_presence_col_within_df.columns:
+            if x in col:
+                dict_keys_names_dfs_values_cols_contain_x[col] = self.get_dfs_names_if_contain_col(col)
+        return Pexpansion.upside_down_dictionary(dict_keys_names_dfs_values_cols_contain_x)
+
+
+
+
+
 
