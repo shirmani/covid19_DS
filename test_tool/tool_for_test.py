@@ -17,6 +17,16 @@ class Tool:
             return False
 
     @staticmethod
+    def compare_dict_with_list_as_value_without_consider_order(dicta, dictb):
+        if dicta.keys() != dictb.keys():
+            return False
+
+        for k in dicta.keys():
+            if dicta[k].sort() != dictb[k].sort():
+                return False
+        return True
+
+    @staticmethod
     def if_a_category_column_contains_only_valid_values(df, col, valid_values):
         result = 0
         for i in set(dict(df[col].value_counts()).keys()):
