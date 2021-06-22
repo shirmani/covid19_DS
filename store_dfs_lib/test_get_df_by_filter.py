@@ -19,6 +19,8 @@ class TestStoreDF:
         filter_df = FilterStoreDF(StoreDF(dfs, dfs_name))
         yield filter_df
 
+
+
     @pytest.fixture(scope="function")
     def dfs_name(self):
         dfs_name = ["a", "b", "c"]
@@ -40,6 +42,36 @@ class TestStoreDF:
     def test_get_dfs_names_if_contain_col(self, filter_df, col, target):
         result = filter_df.get_dfs_names_if_contain_col(col)
         assert result == target
+
+    @pytest.fixture(scope="function")
+    def complex_filter_df(self):
+        dfs = [pd.DataFrame({"symptoms_origin_1": [1, 3, 4],
+                             "b": [1, 3, 4],
+                             "symptoms_origin_2": [1, 3, 4],
+                             "symptoms": [1, 3, 4],
+                             "origin_1": [1, 3, 4],
+                             "symptoms_origin_3": [1, 3, 4],}),
+               pd.DataFrame({"n": [1, 3, 4],
+                             "b": [1, 3, 4],
+                             "symptoms_origin": [1, 3, 4],}),
+               pd.DataFrame({"symptoms_origin_1": [1, 3, 4],
+                             "n": [1, 3, 4],
+                             "_x": [1, 3, 4],
+                             "symptoms_origin_2": [1, 3, 4],})]
+        dfs_name = ["vietnam", "world", "philippines"]
+        complex_filter_df = FilterStoreDF(StoreDF(dfs, dfs_name))
+        yield complex_filter_df
+
+    @pytest.mark.parametrize("x, target",
+                             [("symptoms_origin",
+                               {"vietnam": ["symptoms_origin_1", "symptoms_origin_2", "symptoms_origin_3"],
+                                "world": ["symptoms_origin"],
+                                "philippines": ["symptoms_origin_1", "symptoms_origin_2"]}),
+                              ("x", {"philippines": ["_x"]}),
+                              ("jjj", {})])
+    def test_get_dict_keys_names_dfs_values_cols_contain_x(self, complex_filter_df, x, target):
+        result = complex_filter_df.get_dict_keys_names_dfs_values_cols_contain_x(x)
+        assert Tool.compare_dict_with_list_as_value_without_consider_order(result, target)
 
 
 if __name__ == "__main__":
