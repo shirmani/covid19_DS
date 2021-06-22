@@ -41,6 +41,16 @@ class TestTool:
     def test_compare_dfs(self, dfa, dfb, result):
         assert Tool.compare_dfs(dfa, dfb) == result
 
+    @pytest.mark.parametrize("dicta, dictb",
+                             [({"a": ["k", "r", "y"],
+                                "b": ["e"],
+                                "c": ["y", "u"]},
+                               {"c": ["u","y", ],
+                                "a": ["r", "k","y"],
+                                "b": ["e"]})])
+    def test_compare_dict_with_list_as_value_without_consider_order(self, dicta, dictb):
+        assert Tool.compare_dict_with_list_as_value_without_consider_order(dicta, dictb)
+
     @pytest.mark.parametrize("df, result",
                              [(pd.DataFrame({"binary_int": [0, 1, "2", "0", np.nan, 0.0, 1.0, 1.5, True]}), False),
                               (pd.DataFrame({"binary_int": [0, 1, np.nan, 0.0, 1.0, ]}), True),
