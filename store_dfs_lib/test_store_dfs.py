@@ -51,5 +51,44 @@ class TestStoreDF:
         assert Tool.compare_dfs(store_dfs.get_df_by_name("b"), target_b)
 
 
+    @pytest.mark.parametrize("change_dict, target_a, target_b",
+                             [({"a": {"a": "first", "b": "last"},
+                               "b": {"n": "x"}},
+                              pd.DataFrame({"first": [1, 3, 4],
+                                            "last": [1, 3, 4]}),
+                              pd.DataFrame({"x": [1, 3, 4],
+                                            "b": [1, 3, 4]})),
+                              ({"a": {},
+                                "b": {"n": "x", "k": "tt"}},
+                               pd.DataFrame({"a": [1, 3, 4],
+                                             "b": [1, 3, 4]}),
+                               pd.DataFrame({"x": [1, 3, 4],
+                                             "b": [1, 3, 4]})),
+                              ])
+    def test_rename_dfs_cols(self, store_dfs, change_dict, target_a, target_b):
+        store_dfs.rename_dfs_cols(change_dict)
+        assert Tool.compare_dfs(store_dfs.get_df_by_name("a"), target_a)
+        assert Tool.compare_dfs(store_dfs.get_df_by_name("b"), target_b)
+
+    @pytest.mark.parametrize("change_dict, target_a, target_b",
+                             [({"a": ["a"],
+                               "b": ["b"]},
+                              pd.DataFrame({"b": [1, 3, 4]}),
+                              pd.DataFrame({"n": [1, 3, 4]}))])
+    def test_drop_cols_from_dfs(self, store_dfs, change_dict, target_a, target_b):
+        store_dfs.drop_cols_from_dfs(change_dict)
+        assert Tool.compare_dfs(store_dfs.get_df_by_name("a"), target_a)
+        assert Tool.compare_dfs(store_dfs.get_df_by_name("b"), target_b)
+
+    @pytest.mark.parametrize("change_dict, target_a",
+                             [({"a": ["gg"]},
+                              pd.DataFrame({"a": [1, 3, 4],
+                                            "b": [1, 3, 4]}))])
+    def test_w(self, store_dfs, change_dict, target_a):
+        store_dfs.drop_cols_from_dfs(change_dict)
+        assert Tool.compare_dfs(store_dfs.get_df_by_name("a"), target_a)
+
+
+
 if __name__ == "__main__":
     pytest.main()
