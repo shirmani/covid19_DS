@@ -1,5 +1,5 @@
 from unite_dfs_parts.unite_col import *
-from clean_text.pre_process_text.pre_process_text import *
+from clean_text.pre_process_text.abstract_pre_process_text import *
 
 
 class NOPreProcess(PreProcessText):
