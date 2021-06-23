@@ -1,4 +1,4 @@
-from clean_data.clean import *
+from clean.clean import *
 
 
 class Cage:

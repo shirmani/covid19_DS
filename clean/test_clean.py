@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from clean_data.clean import *
+from clean.clean import *
 from test_tool.tool_for_test import *
 
 
