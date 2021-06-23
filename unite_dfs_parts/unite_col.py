@@ -1,5 +1,5 @@
 import pandas as pd
-from clean_data.clean import Clean
+from clean.clean import Clean
 from python_expansion_lib.python_expansion import Pexpansion
 
 
