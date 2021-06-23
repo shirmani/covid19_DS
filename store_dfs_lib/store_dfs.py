@@ -24,3 +24,13 @@ class StoreDF:
     def add_col_to_dfs(self, ls_names_dfs, name_col, initial_value):
         for name in ls_names_dfs:
             self.get_df_by_name(name)[name_col] = initial_value
+
+    def rename_dfs_cols(self, change_name_dict):
+        for df_name in change_name_dict:
+            self.get_df_by_name(df_name).rename(columns=change_name_dict[df_name], inplace=True)
+
+    def drop_cols_from_dfs(self, drop_cols_dict):
+        try:
+            for df_name in drop_cols_dict:
+                self.get_df_by_name(df_name).drop(drop_cols_dict[df_name], axis=1, inplace=True)
+        except KeyError as e: print("KeyError:drop_cols_from_dfs: " + df_name + str(e).strip('"'))

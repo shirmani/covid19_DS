@@ -25,6 +25,12 @@ class ControllerStoreDFs:
     def add_col_to_dfs(self, ls_names_dfs, name_col, initial_value):
         self.store_df.add_col_to_dfs(ls_names_dfs, name_col, initial_value)
 
+    def rename_dfs_cols(self, change_name_dict):
+        self.store_df.rename_dfs_cols(change_name_dict)
+
+    def drop_cols_from_dfs(self, drop_cols_dict):
+        self.store_df.drop_cols_from_dfs(drop_cols_dict)
+
     # filter
     def get_dfs_names_if_contain_col(self, col):
         return self.filter_store.get_dfs_names_if_contain_col(col)
