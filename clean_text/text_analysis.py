@@ -1,9 +1,9 @@
 from unite_dfs_parts.preservation import PreservationCol
-from clean_text.guess.guess import Guess
+from clean_text.guess.abstract_guess import Guess
 from clean_text.organize_col.multicategories_col import MultiCategoriesCol
-from clean_text.organize_col.organize_col import OrganizerCol
+from clean_text.organize_col.abstract_organize_col import OrganizerCol
 from clean_text.pre_process_text.make_text_to_root import ToRoot
-from clean_text.pre_process_text.pre_process_text import PreProcessText
+from clean_text.pre_process_text.abstract_pre_process_text import PreProcessText
 from disply_code_clear.display import Display
 from python_expansion_lib.python_expansion import Pexpansion
 
