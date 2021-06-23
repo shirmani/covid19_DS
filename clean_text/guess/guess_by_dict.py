@@ -1,7 +1,7 @@
 import pandas as pd
-from clean_data.clean import Clean
+from clean.clean import Clean
 from unite_dfs_parts.unite_col import Unite
-from clean_text.guess.guess import Guess
+from clean_text.guess.abstract_guess import Guess
 from python_expansion_lib.python_expansion import Pexpansion
 
 

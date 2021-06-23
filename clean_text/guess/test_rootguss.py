@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 from test_tool.tool_for_test import *
-from clean_data.clean_text.guess_by_root import *
+from clean.clean_text.guess_by_root import *
 
 
 class TestGuessRoot:
