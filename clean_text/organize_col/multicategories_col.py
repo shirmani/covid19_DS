@@ -1,5 +1,5 @@
 from unite_dfs_parts.unite_col import Unite
-from clean_text.organize_col.organize_col import OrganizerCol
+from clean_text.organize_col.abstract_organize_col import OrganizerCol
 
 
 class MultiCategoriesCol(OrganizerCol):
