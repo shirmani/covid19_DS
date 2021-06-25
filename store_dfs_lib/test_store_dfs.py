@@ -1,7 +1,6 @@
 import pandas as pd
 import pytest
 
-from python_expansion_lib.python_expansion import Pexpansion
 from store_dfs_lib.store_dfs import StoreDF
 from test_tool.tool_for_test import Tool
 
@@ -50,25 +49,19 @@ class TestStoreDF:
         assert Tool.compare_dfs(store_dfs.get_df_by_name("a"), target_a)
         assert Tool.compare_dfs(store_dfs.get_df_by_name("b"), target_b)
 
-
     @pytest.mark.parametrize("change_dict, target_a, target_b",
                              [({"a": {"a": "first", "b": "last"},
                                "b": {"n": "x"}},
-                              pd.DataFrame({"first": [1, 3, 4],
-                                            "last": [1, 3, 4]}),
-                              pd.DataFrame({"x": [1, 3, 4],
-                                            "b": [1, 3, 4]})),
+                               {"first", "last"},
+                               {"x", "b"}),
                               ({"a": {},
                                 "b": {"n": "x", "k": "tt"}},
-                               pd.DataFrame({"a": [1, 3, 4],
-                                             "b": [1, 3, 4]}),
-                               pd.DataFrame({"x": [1, 3, 4],
-                                             "b": [1, 3, 4]})),
-                              ])
+                               {"a", "b"},
+                               {"x", "b"})])
     def test_rename_dfs_cols(self, store_dfs, change_dict, target_a, target_b):
         store_dfs.rename_dfs_cols(change_dict)
-        assert Tool.compare_dfs(store_dfs.get_df_by_name("a"), target_a)
-        assert Tool.compare_dfs(store_dfs.get_df_by_name("b"), target_b)
+        assert set(store_dfs.get_df_by_name("a").columns) == target_a
+        assert set(store_dfs.get_df_by_name("b").columns) == target_b
 
     @pytest.mark.parametrize("change_dict, target_a, target_b",
                              [({"a": ["a"],
