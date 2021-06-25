@@ -25,7 +25,6 @@ class CleanData:
 
     @staticmethod
     def infer_feature(store_df):
-        store_df.print_col_by_dfs()
         a = time.time()
         inferJ = InferJ(store_df)
         inferJ.ever_icu_by_treatment()
