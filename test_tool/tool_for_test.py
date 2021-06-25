@@ -22,7 +22,11 @@ class Tool:
             return False
 
         for k in dicta.keys():
-            if dicta[k].sort() != dictb[k].sort():
+            a = dicta[k]
+            b = dictb[k]
+            a.sort()
+            b.sort()
+            if a != b:
                 return False
         return True
 
