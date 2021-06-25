@@ -1,11 +1,12 @@
 import pandas as pd
 
-from pipeline.pipeline_lib.clean_data import CleanData
-from pipeline.pipeline_lib.read_dfs import ReadDfs
+from pipeline.pipeline_lib.clean_feature.clean_data import CleanData
+from pipeline.pipeline_lib.prepare_cols import Prepare
 from pipeline.pipeline_lib.stabilize_dfs import StabilizeDF
+from pipeline.pipeline_value.value_for_change_cols_in_dfs import change_cols_names_by_df, drop_cols_by_df
 from pipeline.pipeline_value.value_read_dfs import path, origin_dict
 
-from clean_data.clean import Clean
+from clean.clean import Clean
 from store_dfs_lib.controller_store_dfs import ControllerStoreDFs
 from unite_dfs_parts.unite_col import Unite
 
@@ -43,25 +44,32 @@ for var in origin_dict:
                                                     sheet_name=origin_dict[var][2])
     dfs.append(vars()[var])
 
-store_df = ControllerStoreDFs(StoreDF(dfs, dfs_names))
+dfs_store = ControllerStoreDFs(StoreDF(dfs, dfs_names))
 
 #  ---- DS consolidation ----
-stabilize = StabilizeDF(store_df)
+stabilize = StabilizeDF(dfs_store)
 stabilize.stabilize_DFs()
-stabilize.organize_cols()
-
+canada = dfs_store.get_df_by_name("canada")
 del stabilize
-canada = store_df.get_df_by_name("canada")
-store_df = ControllerStoreDFs(StoreDF(dfs, dfs_names))
-#  ---- Clean ----
 
-CleanData.clean_data(store_df)
+# ---- Rename & Del Unnecessary Columns ----
+Prepare.organize_cols(dfs_store)
 
 
-# # ---- Shape of Data ----
+
+
+
+# ---- Shape of Data ----
 # store_df.print_shape_dfs()
-# store_df.print_cols_by_df()
+# dfs_store.print_cols_by_df()
 # store_df.print_cols_values_by_dfs()
+
+#  ---- Clean ----
+CleanData.clean_data(dfs_store)
+
+
+
+
 
 
 
@@ -201,29 +209,29 @@ CleanData.clean_data(store_df)
 
 # ---- Severity Illness ----
 
-for name_df in store_df.get_dfs_names_if_contain_col("severity_illness"):
-    store_df.get_df_by_name(name_df)["severity_illness"] = store_df.get_df_by_name(name_df)["severity_illness"].apply(lambda x:
+for name_df in dfs_store.get_dfs_names_if_contain_col("severity_illness"):
+    dfs_store.get_df_by_name(name_df)["severity_illness"] = dfs_store.get_df_by_name(name_df)["severity_illness"].apply(lambda x:
                                      Pexpansion.get_key_from_dict_by_value(severity_illness_dict, x))
 
 
 
 # by date
-ls_deceased_date = store_df.get_dfs_names_if_contain_col("deceased_date")
-ls_released_date = store_df.get_dfs_names_if_contain_col("released_date")
+ls_deceased_date = dfs_store.get_dfs_names_if_contain_col("deceased_date")
+ls_released_date = dfs_store.get_dfs_names_if_contain_col("released_date")
 
-store_df.add_col_to_dfs(ls_deceased_date + ls_released_date, "severity_illness1", "")
+dfs_store.add_col_to_dfs(ls_deceased_date + ls_released_date, "severity_illness1", "")
 
 for name_df in ls_deceased_date:
-    store_df.get_df_by_name(name_df).loc[store_df.get_df_by_name(name_df).deceased_date.notnull(),
+    dfs_store.get_df_by_name(name_df).loc[dfs_store.get_df_by_name(name_df).deceased_date.notnull(),
                                          'severity_illness1'] = "deceased"
     Display.print_with_num_of_line("deceased_date -> severity_illness1")
 
 for name_df in ls_released_date:
-    store_df.get_df_by_name(name_df).loc[store_df.get_df_by_name(name_df).released_date.notnull(),
+    dfs_store.get_df_by_name(name_df).loc[dfs_store.get_df_by_name(name_df).released_date.notnull(),
                                          'severity_illness1'] += ",cured"
     Display.print_with_num_of_line("released_date -> severity_illness1")
 
-store_df.print_col_values_by_dfs('severity_illness1')
+dfs_store.print_col_values_by_dfs('severity_illness1')
 
 
 # unique col
@@ -282,15 +290,15 @@ for name_df in [world, vietnam, philippines]:
                                                                      "cured": 3}))
 
 
-store_df.print_col_values_by_dfs("severity_illness_by_WHO")
+dfs_store.print_col_values_by_dfs("severity_illness_by_WHO")
 
 # unit "severity_illness"
-for name_df in store_df.dfs:
+for name_df in dfs_store.dfs:
     Unite.unite_all_the_cols_that_contain_x(name_df, "severity_illness", "severity_illness_over_time")
     if "severity_illness_over_time" in name_df.columns:
         Clean.replace_value_by_contained_all_x_in_ls(name_df, "severity_illness_over_time", {"": ["critical", "cured"]})
-store_df.print_col_values_by_dfs('severity_illness')
-store_df.print_col_values_by_dfs('severity_illness_over_time')
+dfs_store.print_col_values_by_dfs('severity_illness')
+dfs_store.print_col_values_by_dfs('severity_illness_over_time')
 
 # del check_df
         # cat = CategoryCol({"": -1, "asymptomatic": 0, "good": 1, "critical": 2,
