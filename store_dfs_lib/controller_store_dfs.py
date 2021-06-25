@@ -15,21 +15,26 @@ class ControllerStoreDFs:
 
     def remove(self, df_names):
         self.store_df.remove(df_names)
+        self.filter_store = FilterStoreDF(self.store_df)
 
     def add(self, df_name, df):
         self.store_df.add(df_name, df)
+        self.filter_store = FilterStoreDF(self.store_df)
 
     def get_df_by_name(self, df_name):
         return self.store_df.get_df_by_name(df_name)
 
     def add_col_to_dfs(self, ls_names_dfs, name_col, initial_value):
         self.store_df.add_col_to_dfs(ls_names_dfs, name_col, initial_value)
+        self.filter_store = FilterStoreDF(self.store_df)
 
     def rename_dfs_cols(self, change_name_dict):
         self.store_df.rename_dfs_cols(change_name_dict)
+        self.filter_store = FilterStoreDF(self.store_df)
 
     def drop_cols_from_dfs(self, drop_cols_dict):
         self.store_df.drop_cols_from_dfs(drop_cols_dict)
+        self.filter_store = FilterStoreDF(self.store_df)
 
     # filter
     def get_dfs_names_if_contain_col(self, col):
