@@ -49,7 +49,7 @@ class TestStoreDF:
                              "b": [1, 3, 4],
                              "symptoms_origin_2": [1, 3, 4],
                              "symptoms": [1, 3, 4],
-                             "origin_1": [1, 3, 4],
+                             "origin_+-1": [1, 3, 4],
                              "symptoms_origin_3": [1, 3, 4],}),
                pd.DataFrame({"n": [1, 3, 4],
                              "b": [1, 3, 4],
@@ -67,8 +67,7 @@ class TestStoreDF:
                                {"vietnam": ["symptoms_origin_1", "symptoms_origin_2", "symptoms_origin_3"],
                                 "world": ["symptoms_origin"],
                                 "philippines": ["symptoms_origin_1", "symptoms_origin_2"]}),
-                              ("x", {"philippines": ["_x"]}),
-                              ("jjj", {})])
+                              ("x", {"philippines": ["_x"]})])
     def test_get_dict_keys_names_dfs_values_cols_contain_x(self, complex_filter_df, x, target):
         result = complex_filter_df.get_dict_keys_names_dfs_values_cols_contain_x(x)
         assert Tool.compare_dict_with_list_as_value_without_consider_order(result, target)
