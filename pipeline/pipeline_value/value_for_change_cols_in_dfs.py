@@ -18,7 +18,7 @@ change_cols_names_by_df = {"france": {"health": "severity_illness", "status": "t
                                          "released_date": "recovery_date"},
 
                            "korea": {"patient_id": "id",
-                                     "disease": "more_data_and_background_diseases_binary",
+                                     "disease": "background_diseases_binary_1",
                                      "state": "severity_illness", "province": "region",
                                      "infection_case": "infection_place",
                                      "symptom_onset_date": "date_onset_symptoms",
@@ -31,8 +31,7 @@ change_cols_names_by_df = {"france": {"health": "severity_illness", "status": "t
                                      "chronic_disease": "background_diseases",
                                      "outcome": "severity_illness",
                                      "travel_history_location": "infection_place",
-                                     'travel_history_dates': "return_date",
-                                     "symptoms": "symptoms"},
+                                     'travel_history_dates': "return_date"},
 
                            "new_zealand": {"MOH Case Number": "id", 'Location': 'city', 'Age Band': "age_band",
                                            'Gender': "sex",
