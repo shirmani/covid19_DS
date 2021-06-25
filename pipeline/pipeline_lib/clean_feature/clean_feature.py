@@ -32,6 +32,7 @@ class CleanJ(CleanJAbstract):
     def background_diseases(self, background_diseases_bag_words, background_diseases_sentences_bag,
                             mexico_background_diseases_cols):
         text_analysis_dict = self.dfs_store.get_dict_keys_names_dfs_values_cols_contain_x("origin_background_diseases")
+        print(text_analysis_dict)
         text_analysis_dict["world"].append("origin_symptoms")
 
         for df_name, cols in text_analysis_dict.items():
