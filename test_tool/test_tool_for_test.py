@@ -29,27 +29,33 @@ class TestTool:
          pd.DataFrame({"x": [0.0, 0.0, 1.0],
                        "a": [1.0, 0.0, 0.0],
                        "n": [0.0, 1.0, 1.0],
-                       "b": [1.0, 1.0, 0.0]}), False),
-        (pd.DataFrame({"a": [1.0, 0.0, 0.0],
-                       "x": [0.0, 0.0, 1.0],
-                       "b": [1.0, 1.0, 0.0],
-                       "n": [0.0, 1.0, 1.0]}),
-         pd.DataFrame({"a": [1, 0, 0],
-                       "x": [0, 0, 1],
-                       "b": [1, 1, 0],
-                       "n": [0, 1, 1]}),True)])
+                       "b": [1.0, 1.0, 0.0]}), False),])
+        # (pd.DataFrame({"a": [1.0, 0.0, 0.0],
+        #                "x": [0.0, 0.0, 1.0],
+        #                "b": [1.0, 1.0, 0.0],
+        #                "n": [0.0, 1.0, 1.0]}),
+        #  pd.DataFrame({"a": [1, 0, 0],
+        #                "x": [0, 0, 1],
+        #                "b": [1, 1, 0],
+        #                "n": [0, 1, 1]}),True)
     def test_compare_dfs(self, dfa, dfb, result):
         assert Tool.compare_dfs(dfa, dfb) == result
 
-    @pytest.mark.parametrize("dicta, dictb",
+    @pytest.mark.parametrize("dicta, dictb, target",
                              [({"a": ["k", "r", "y"],
                                 "b": ["e"],
                                 "c": ["y", "u"]},
                                {"c": ["u","y", ],
                                 "a": ["r", "k","y"],
-                                "b": ["e"]})])
-    def test_compare_dict_with_list_as_value_without_consider_order(self, dicta, dictb):
-        assert Tool.compare_dict_with_list_as_value_without_consider_order(dicta, dictb)
+                                "b": ["e"]}, True),
+                              ({"a": ["k", "r", "y"],
+                                "b": ["e"],
+                                "c": ["y", "u"]},
+                               {"a": ["k", "r", "y"],
+                                "b": ["e", "r"],
+                                "c": []}, False)])
+    def test_compare_dict_with_list_as_value_without_consider_order(self, dicta, dictb, target):
+        assert Tool.compare_dict_with_list_as_value_without_consider_order(dicta, dictb) == target
 
     @pytest.mark.parametrize("df, result",
                              [(pd.DataFrame({"binary_int": [0, 1, "2", "0", np.nan, 0.0, 1.0, 1.5, True]}), False),
