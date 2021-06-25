@@ -2,30 +2,22 @@ from pipeline.pipeline_value.value_for_change_cols_in_dfs import change_cols_nam
 
 
 class Prepare:
-    def __init__(self, dfs_store):
-        self.dfs_store = dfs_store
 
-    def change_name_cols(self, change_cols_names_by_df):
-        for k in change_cols_names_by_df:
-            self.dfs_store.get_df_by_name(k).rename(columns=change_cols_names_by_df[k], inplace=True)
-
-    def drop_unnecessary_cols(self, drop_cols_by_df):
-        for k in drop_cols_by_df:
-            self.dfs_store.get_df_by_name(k).drop(drop_cols_by_df[k], axis=1, inplace=True)
-
-    def add_origin(self):
-        names_cols_add_origin = ["treatment", "symptoms", "severity_illness", "infection_place",
+    @staticmethod
+    def add_origin(dfs_store):
+        names_cols_add_origin = ["symptoms", 'treatment',  "severity_illness", "infection_place",
                                  "background_diseases", "infected_by"]
-        cols = []
-        for col in self.dfs_store.df_of_presence_col_within_df.columns:
-            for name in names_cols_add_origin:
-                if name in col:
-                    cols.append(col)
+        dfs_store.print_cols_by_df()
+        for col in names_cols_add_origin:
+            rename_dict = dfs_store.get_dict_keys_names_dfs_values_cols_contain_x(col)
+            for name_df in rename_dict:
+                rename_dict[name_df] = dict(zip(rename_dict[name_df], ["origin_" + i for i in rename_dict[name_df]]))
+            dfs_store.rename_dfs_cols(rename_dict)
+        return dfs_store
 
-        d = dict(zip(cols, ["origin_" + i for i in cols]))
-        for df in self.dfs_store.dfs:
-            df.rename(columns=d, inplace=True)
+    @staticmethod
+    def organize_cols(dfs_store):
+        dfs_store.rename_dfs_cols(change_cols_names_by_df)
+        dfs_store.drop_cols_from_dfs(drop_cols_by_df)
+        Prepare.add_origin(dfs_store)
 
-    def organize_cols(self):
-        self.change_name_cols(change_cols_names_by_df)
-        self.drop_unnecessary_cols(drop_cols_by_df)
