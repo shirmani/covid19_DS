@@ -52,21 +52,19 @@ class Clean:
                     df.loc[check_df[col] == 1, name_output_col] = k
 
     @staticmethod
-    def replace_empty_value_to_npnan(dfs, col):
-        dfs = Pexpansion.if_x_not_ls_make_x_ls(dfs)
-        for df in dfs:
-            df[col] = df[col].fillna(np.nan)
-            df[col] = df[col][df[col].notnull()].apply(lambda x: Pexpansion.return_npnan_instead_empty_space(x))
-
-    @staticmethod
     def clean_text_col_from_punctuation(df, col):
         punctuation = {" ": [",", ".", ";", ":", "-", "‚", "+", "!", "_", "?", "|", '/', ]}
         df[col] = df[col].apply(lambda x: Pexpansion.replace_str_by_comparison(x, punctuation) if type(x) == str else x)
 
     @staticmethod
+    def replace_all_null_to_x(df, col, x):
+        df[col] = df[col].fillna(x)
+        Clean.replace_value_by_comparison(df, col, {x: ["nan", "None", "NaN"]})
+
+    @staticmethod
     def add_comma_to_value_and_replace_null_with_empty_str(df, col):
-        Clean.replace_empty_value_to_npnan(df, col)
-        df[col] = df[col].fillna("")
+        df[col] = df[col].apply(lambda x: x.strip(" ") if type(x) == str else x)
+        Clean.replace_all_null_to_x(df, col, "")
         df[col] = df[col].astype(str) + ','
         Clean.replace_value_by_comparison(df, col, {"": ","})
 
@@ -74,7 +72,7 @@ class Clean:
     def change_text_col_to_ls_words_col(df, col):
         """ "abc abc abc" -> ["abc","abc", "abc"] """
         Clean.clean_text_col_from_punctuation(df, col)
-        Clean.replace_empty_value_to_npnan(df, col)
+        Clean.replace_all_null_to_x(df, col, np.nan)
         df[col] = df[col].apply(lambda x: x.split(" ") if type(x) == str else x)
         df[col] = df[col].apply(lambda x: Pexpansion.remove_from_flat_ls(x, [""]) if type(x) == list else x)
 
