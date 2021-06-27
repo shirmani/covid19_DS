@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from clean.clean import *
+from clean_lib.clean import *
 from test_tool.tool_for_test import *
 
 
@@ -28,14 +28,6 @@ class TestClean:
         target = pd.DataFrame({"a": ["v", "v", np.nan, 1, 2, "l", None, "l", "", 11, [1, 2, "3", 2]]})
         assert Tool.compare_dfs(df, target)
 
-    def test_replace_value_by_contained_all_x_in_ls(self):
-        pass
-
-    def test_replace_empty_value_to_npnan(self, df):
-        Clean.replace_empty_value_to_npnan(df, "a")
-        target = pd.DataFrame({"a": ["x", "ax", np.nan, 1, 2, np.nan, np.nan, "|  ", np.nan, 11, [1, 2, "3", 2]]})
-        assert Tool.compare_dfs(df, target)
-
     def test_clean_text_col_from_punctuation(self, text_df):
         Clean.clean_text_col_from_punctuation(text_df, "a")
         target = pd.DataFrame({"a": ["Dad  went to the Garden ", None, " Tulik sits by the sea",
@@ -44,8 +36,9 @@ class TestClean:
         assert Tool.compare_dfs(text_df, target)
 
     def test_add_comma_to_value_and_replace_null_with_empty_str(self, df):
+        pd.DataFrame({"a": ["x", "ax", np.nan, 1, 2, "  ", None, "|  ", "", 11, [1, 2, '3', 2]]})
         Clean.add_comma_to_value_and_replace_null_with_empty_str(df, "a")
-        target = pd.DataFrame({"a": ["x,", "ax,", "", "1,", "2,", "", "", "|  ,", "",
+        target = pd.DataFrame({"a": ["x,", "ax,", "", "1,", "2,", "", "", "|,", "",
                                      "11,", "[1, 2, '3', 2],"]})
         assert Tool.compare_dfs(df, target)
 
@@ -58,9 +51,16 @@ class TestClean:
         assert Tool.compare_dfs(text_df, target)
 
 
+    def replace_all_null_to_x_equal_empty_space(self):
+        df = pd.DataFrame({"a":  [np.nan, "None", "d", None, "nan"]})
+        Clean.replace_all_null_to_x(df, "a", "")
+        target = pd.DataFrame({"a":  ["", "", "d", "", ""]})
+        assert Tool.compare_dfs(df, target)
 
-
-
+    def replace_all_null_to_x_equal_empty_npnan(self, df):
+        Clean.replace_all_null_to_x(df, "a", np.nan)
+        target = pd.DataFrame({"a": ["x", "ax", np.nan, 1, 2, np.nan, np.nan, "|  ", np.nan, 11, [1, 2, "3", 2]]})
+        assert Tool.compare_dfs(df, target)
 
 
 if __name__ == "__main__":
