@@ -50,11 +50,11 @@ class TestClean:
                                      ["Assaf", "bought", "5", "cars"], np.nan, 33]})
         assert Tool.compare_dfs(text_df, target)
 
-
     def replace_all_null_to_x_equal_empty_space(self):
-        df = pd.DataFrame({"a":  [np.nan, "None", "d", None, "nan"]})
+        df = pd.DataFrame({"a": [np.nan, "None", "d", None, "nan", float("nan"),
+                                 float("Nan"), float("NaN"), float("NAN"), pd.NA]})
         Clean.replace_all_null_to_x(df, "a", "")
-        target = pd.DataFrame({"a":  ["", "", "d", "", ""]})
+        target = pd.DataFrame({"a":  ["", "", "d", "", "", "", "", "", "", ""]})
         assert Tool.compare_dfs(df, target)
 
     def replace_all_null_to_x_equal_empty_npnan(self, df):
