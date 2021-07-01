@@ -14,7 +14,8 @@ class CDate:
     @staticmethod
     def get_range_of_dates_give_one_date(x, character_separator, format, earliest=True):
         df = pd.DataFrame({"a": x.split(character_separator)})
-        df["a"] = pd.to_datetime(df["a"], infer_datetime_format=False, errors='coerce', format=format)
+        df["a"] = pd.to_datetime(df["a"].str.strip(), infer_datetime_format=False, errors='coerce', format=format)
+
         if earliest:
             return df["a"].min().date()
         else:
@@ -29,12 +30,14 @@ class CDate:
 
     @staticmethod
     def strip_pollution(df, col):
+        df[col] = df[col].str.replace(" ", "")
         for i in [" ", "-", ":", ","]:
             df[col] = df[col].str.strip(i)
 
     @staticmethod
     def clean_date_col(df, col, format="%Y-%m-%d", earliest=True):
         df[col] = df[col].astype(str)
+        format = format.replace(" ", "")
         CDate.strip_pollution(df, col)
         CDate.replace_range_of_dates_to_1_date(df, col, format, earliest=earliest)
         df[col] = pd.to_datetime(df[col], errors='coerce', format=format)
