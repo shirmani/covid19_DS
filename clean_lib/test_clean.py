@@ -25,7 +25,7 @@ class TestClean:
 
     def test_replace_value_by_contained_string(self, df):
         Clean.replace_value_by_contained_string(df, "a", {"v": ["x"], "l": [" "], "3": [1]})
-        target = pd.DataFrame({"a": ["v", "v", np.nan, 1, 2, "l", None, "l", "", 11, [1, 2, "3", 2]]})
+        target = pd.DataFrame({"a": ["v", "v", np.nan, 1, 2, "l", None, "l", "", 11, "l"]})
         assert Tool.compare_dfs(df, target)
 
     def test_clean_text_col_from_punctuation(self, text_df):
