@@ -3,14 +3,14 @@ import pytest
 
 from test_tool.tool_for_test import Tool
 from unite_dfs_parts.unite_col import Unite
-
+import numpy as np
 
 class TestUnite:
     @pytest.fixture(scope="function")
     def df(self):
         df = pd.DataFrame({"axg": [1, 3, 4],
                            "b": [1, 3, 4],
-                           "nxg": [3, 3, 5],
+                           "nxg": [3, 3, np.nan],
                            "ggg": [1, 3, 4],
                            "xdg": [1, 3, 4]})
 
@@ -18,7 +18,7 @@ class TestUnite:
 
     def test_unite_cols(self, df):
         Unite.unite_cols(df, ['axg', 'nxg'], delete=True)
-        target = pd.DataFrame({"axg": ["1,3", "3", "4,5"],
+        target = pd.DataFrame({"axg": ["1,3.0", "3,3.0", "4"],
                                "b": [1, 3, 4],
                                "ggg": [1, 3, 4],
                                "xdg": [1, 3, 4]})
@@ -29,7 +29,7 @@ class TestUnite:
         target = pd.DataFrame({"b": [1, 3, 4],
                                "ggg": [1, 3, 4],
                                "xdg": [1, 3, 4],
-                               "new": ["1,3", "3", "4,5"]})
+                               "new": ["1,3.0", "3,3.0", "4"]})
 
         assert Tool.compare_dfs(target, df)
 
