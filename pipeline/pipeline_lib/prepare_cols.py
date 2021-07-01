@@ -7,7 +7,6 @@ class Prepare:
     def add_origin(dfs_store):
         names_cols_add_origin = ["symptoms", 'treatment',  "severity_illness", "infection_place",
                                  "background_diseases", "infected_by"]
-        dfs_store.print_cols_by_df()
         for col in names_cols_add_origin:
             rename_dict = dfs_store.get_dict_keys_names_dfs_values_cols_contain_x(col)
             for name_df in rename_dict:
