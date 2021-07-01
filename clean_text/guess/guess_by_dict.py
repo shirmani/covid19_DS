@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from clean_lib.clean import Clean
 from unite_dfs_parts.unite_col import Unite
 from clean_text.guess.abstract_guess import Guess
@@ -53,7 +54,7 @@ class GuessByDict(Guess):
         df = pd.concat(cols, axis=1)
         df[self.output_col_name] = ""
         Unite.unite_cols(df, [self.output_col_name, "guess_word", "guess_sentence"])
-        Clean.replace_empty_value_to_npnan(df, self.output_col_name)
+        Clean.replace_all_null_to_x(df, self.output_col_name, np.nan)
         return df
 
     def guess(self):
