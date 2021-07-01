@@ -1,5 +1,5 @@
 import numpy as np
-from clean.clean import Clean
+from clean_lib.clean import Clean
 
 
 
