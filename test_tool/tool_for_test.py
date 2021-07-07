@@ -47,4 +47,17 @@ class Tool:
                     result += 1
         return Tool.if_val_equal_0_return_True_else_False(result)
 
+    @staticmethod
+    def compare_multicategory_cols(col_a, col_b):
+        def a(x):
+            ls = x.split(",")
+            ls.sort()
+            print(ls)
+            return ",".join(ls)
+
+        col_a = col_a.apply(lambda x: a(x) if type(x) == str else x)
+        col_b = col_b.apply(lambda x: a(x) if type(x) == str else x)
+        return col_a.equals(col_b)
+
+
 
