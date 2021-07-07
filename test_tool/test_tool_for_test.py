@@ -29,15 +29,7 @@ class TestTool:
          pd.DataFrame({"x": [0.0, 0.0, 1.0],
                        "a": [1.0, 0.0, 0.0],
                        "n": [0.0, 1.0, 1.0],
-                       "b": [1.0, 1.0, 0.0]}), False),])
-        # (pd.DataFrame({"a": [1.0, 0.0, 0.0],
-        #                "x": [0.0, 0.0, 1.0],
-        #                "b": [1.0, 1.0, 0.0],
-        #                "n": [0.0, 1.0, 1.0]}),
-        #  pd.DataFrame({"a": [1, 0, 0],
-        #                "x": [0, 0, 1],
-        #                "b": [1, 1, 0],
-        #                "n": [0, 1, 1]}),True)
+                       "b": [1.0, 1.0, 0.0]}), False)])
     def test_compare_dfs(self, dfa, dfb, result):
         assert Tool.compare_dfs(dfa, dfb) == result
 
@@ -77,6 +69,18 @@ class TestTool:
                               pd.DataFrame({"loop": [0, 1, np.nan, 0.0, 1.0, 6]})], True)])
     def test_if_category_col_contains_only_valid_values_on_ls_of_dfs(self, dfs, result):
         assert result == Tool.if_category_col_contains_only_valid_values_on_ls_of_dfs(dfs, "binary", [0, 1])
+
+
+    @pytest.mark.parametrize("dfa, dfb, result",
+                             [(pd.DataFrame({"a": ["a,b", "", "d,c", np.nan, "a"]}),
+                               pd.DataFrame({"b": ["b,a", "", "c,d", np.nan, "a"]}), True),
+                              (pd.DataFrame({"a": ["a,a", "", "d,c", np.nan, "a"]}),
+                               pd.DataFrame({"b": ["b,a", "", "c,d", np.nan, "a"]}), False),
+                              (pd.DataFrame({"a": ["a,b", "", "d,c", np.nan, "a"]}),
+                               pd.DataFrame({"b": ["b,a", "", "c,d", np.nan, "a", "e"]}), False),
+                              ])
+    def test_compare_multicategory_cols(self, dfa, dfb, result):
+        assert result == Tool.compare_multicategory_cols(dfa["a"], dfb["b"])
 
 
 if __name__ == '__main__':
