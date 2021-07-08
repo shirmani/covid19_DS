@@ -46,8 +46,9 @@ class CleanJ(CleanJAbstract):
             self.mexico["background_diseases"] = self.mexico["background_diseases"] + self.mexico[col]
 
         names_dfs = self.dfs_store.get_dfs_names_if_contain_col("background_diseases")
-        Clean.replace_empty_value_to_npnan([self.dfs_store.get_df_by_name(name_df) for name_df in names_dfs],
-                                           "background_diseases")
+        for name_df in names_dfs:
+            Clean.replace_all_null_to_x(self.dfs_store.get_df_by_name(name_df),
+                                        "background_diseases",  np.nan)
 
     def ever_intubated(self, binary_dict):
         d = {"ever_intubated": self.dfs_store.get_dfs_names_if_contain_col("ever_intubated"),
@@ -144,3 +145,12 @@ class CleanJ(CleanJAbstract):
                                                                          "critical": 2, "deceased": 3,
                                                                          "cured": 3}))
         Unite.unite_cols(self.world, ["severity_illness_over_time", "a"])
+
+
+    def severity_illness_over_time_by_origin_treatment(self):
+        Clean.replace_value_by_comparison(self.colombia, "origin_treatment", {"critical": ["Hospital Uci"],
+                                                                         "deceased": ["Fallecido"],
+                                                                         "cured": ["Recuperado"],
+                                                                         "good": ["Casa", "Hospital"]},
+                                          name_output_col='a')
+        Unite.unite_cols(self.colombia, ["severity_illness_over_time", "a"])
