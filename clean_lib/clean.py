@@ -62,6 +62,13 @@ class Clean:
         Clean.replace_value_by_comparison(df, col, {x: ["nan", "None", "NaN"]})
 
     @staticmethod
+    def replace_tags_in_value(df, col, dict_of_change):
+        for replacement in dict_of_change:
+            for tag in dict_of_change[replacement]:
+                df[col] = df[col].str.replace(tag,replacement)
+
+
+    @staticmethod
     def add_comma_to_value_and_replace_null_with_empty_str(df, col):
         df[col] = df[col].apply(lambda x: x.strip(" ") if type(x) == str else x)
         Clean.replace_all_null_to_x(df, col, "")
